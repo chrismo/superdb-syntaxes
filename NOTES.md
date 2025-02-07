@@ -10,6 +10,11 @@ go through the manual Settings "reload" process.
 I'd presume building from json to plist (xml) is something I could automate
 without the use of Sublime.
 
+It's done with [this Python
+file](https://github.com/SublimeText/PackageDev/blob/ec462749684d8b4a5cd4e362639007d339e72bb7/plugins/file_conversion.py#L65)
+- so, at the very least we could use that. If there's any generic json to xml
+conversion tool out there, I'm presuming that would work too.
+
 ## References
 
 1.5 TextMate [Example
