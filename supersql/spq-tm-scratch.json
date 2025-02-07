@@ -1,0 +1,23 @@
+{
+  "scopeName": "source.spq",
+  "fileTypes": ["spq"],
+  "foldingStartMarker": "\\(\\s*$",
+  "foldingStopMarker": "^\\s*\\)",
+  "patterns": [
+    {
+      "name": "keyword.control.spq",
+      "match": "\\b(over)\\b"
+    },
+    {
+      "name": "string.quoted.double.spq",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.spq",
+          "match": "\\."
+        }
+      ]
+    }
+  ]
+}
