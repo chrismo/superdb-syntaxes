@@ -1,18 +1,16 @@
 # Notes
             
-## TODO
-               
-Small scale TODOs listed here. Anything bigger should be a GitHub Issue.
+[//]: # (Small scale TODOs listed here. Anything bigger should be a GitHub Issue.)
                       
 [//]: # (TODO: string quoting not working in kformat_bytes in superkit - it's odd)
 
-it's like - on 1st pass it won't but when certain unknown changes occur while
+[//]: # (it's like - on 1st pass it won't but when certain unknown changes occur while
 typing it will suddenly render the string. maybe the ordering of things needs to
-change. 
+change.) 
 
-[//]: # (TODO: Finish out porting thinsg from Zed Zui syntax)
+[//]: # (TODO: Finish out porting things from Zed Zui syntax)
 [//]: # (TODO: Try the original TextMate JSON with ZSON)
-[//]: # (TODO: Folding by parens isn't working?)
+[//]: # (TODO: Folding by parens isn't working? - foldingStartMarker is ignored looks like )
 [//]: # (TODO: Check GitHub issues)
 
 ## Build Process
