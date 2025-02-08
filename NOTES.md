@@ -1,15 +1,5 @@
 # Notes
          
-[//]: # (Small scale TODOs listed here. Anything bigger should be a GitHub Issue.)
-                      
-[//]: # (it's like - on 1st pass it won't but when certain unknown changes occur while
-typing it will suddenly render the string. maybe the ordering of things needs to
-change.) 
-
-[//]: # (TODO: Try the original TextMate JSON with ZSON)
-[//]: # (TODO: Folding by parens isn't working? - foldingStartMarker is ignored looks like )
-[//]: # (TODO: Check GitHub issues)
-
 ## Build Process
 
 Currently: edit json in-place, go through the manual Settings "reload" process:
@@ -21,8 +11,14 @@ RubyMine section below for more).
 [Zed Syntax in Zui source
 code](https://github.com/brimdata/zui/blob/edbe753b548b56d140802aae65ae14a190ea5e42/apps/zui/src/core/zed-syntax.ts#L26).
 
-1.5 TextMate [Example
+TextMate [Example
 Grammar](https://macromates.com/manual/en/language_grammars#example_grammar)
+
+TextMate [Naming
+Conventions](https://macromates.com/manual/en/language_grammars#naming_conventions)
+
+[JetBrains Custom Language Support
+Tutorial](https://plugins.jetbrains.com/docs/intellij/custom-language-support-tutorial.html)
 
 [Older Sublime
 docs](https://sublime-text-unofficial-documentation.readthedocs.io/en/sublime-text-2/reference/syntaxdefs.html)
@@ -66,13 +62,3 @@ NOPE:  Open Settings -> Remove -> Re-add -> Close.
 
 If a file is visible behind the dialog, highlighting won't update until after
 the Settings dialog is closed, not Apply.
-
-## Notes on Names
-                                             
-see [Naming
-Conventions](https://macromates.com/manual/en/language_grammars#naming_conventions)
-
-I don't see much use of `support.*` - Java and C# in the included TextMate
-Bundles plugin (sources) don't use it at all.
-
-`entity.name.function` - appears to be for parsed function names (C#, Javascript)

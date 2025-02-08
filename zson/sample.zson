@@ -1,9 +1,9 @@
 {
-    "skdoc": {
-        "desc": "Returns the size in bytes in human readable format.",
-        "args": [
+    skdoc: {
+        desc: "Returns the size in bytes in human readable format.",
+        args: [
             {
-                "value": "Must be a uint64"
+                value: "Must be a uint64"
             }
         ]
     }
