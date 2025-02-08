@@ -2,22 +2,22 @@
             
 [//]: # (Small scale TODOs listed here. Anything bigger should be a GitHub Issue.)
                       
-[//]: # (TODO: string quoting not working in kformat_bytes in superkit - it's odd)
-
 [//]: # (it's like - on 1st pass it won't but when certain unknown changes occur while
 typing it will suddenly render the string. maybe the ordering of things needs to
 change.) 
 
 [//]: # (TODO: Finish out porting things from Zed Zui syntax)
+[//]: # (TODO: Zed: Add string interpolation)
+[//]: # (TODO: Zed: Add record parsing)
 [//]: # (TODO: Try the original TextMate JSON with ZSON)
 [//]: # (TODO: Folding by parens isn't working? - foldingStartMarker is ignored looks like )
 [//]: # (TODO: Check GitHub issues)
 
 ## Build Process
 
-Currently: edit json, copy json into the bundle with `build` script, go through
-the manual Settings "reload" process: `Open Settings -> Remove -> Apply ->
-Re-add -> Close.` (See Reloading in RubyMine section below for more).
+Currently: edit json in-place, go through the manual Settings "reload" process:
+`Open Settings -> Remove -> Apply -> Re-add -> Close.` (See Reloading in
+RubyMine section below for more).
 
 ## References
 
@@ -49,13 +49,6 @@ that this is their own way of doing it, and we shouldn't expect RubyMine to work
 with these at all, which is sort of what I've seen so far. The definitions are
 very different.
 
-## json format in RubyMine? No
-
-[//]: # (TODO: triple-check json read by RubyMine? Simplify build process) 
-
-No. I thought I read somewhere that the .json format will be read by RubyMine in
-addition to .plist ... but nope, it doesn't appear to work.
-
 ## Reloading in RubyMine
 
 As I make changes, do I have to remove/re-add to force RubyMine to reload the
@@ -72,3 +65,15 @@ NOPE:  Open Settings -> Remove -> Re-add -> Close.
 
 If a file is visible behind the dialog, highlighting won't update until after
 the Settings dialog is closed, not Apply.
+
+## Notes on Names
+                                             
+see [Naming
+Conventions](https://macromates.com/manual/en/language_grammars#naming_conventions)
+
+I don't see much use of `support.*` - Java and C# in the included TextMate
+Bundles plugin (sources) don't use it at all.
+
+`entity.name.function` - appears to be for parsed function names (C#, Javascript)
+
+

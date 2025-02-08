@@ -5,31 +5,9 @@
   "foldingStopMarker": "^\\s*\\)",
   "patterns": [
     {
-      "name": "keyword.control.spq",
-      "match": "\\b(const|file|from|func|op|this|type)\\b"
-    },
-    {
-      "name": "support.function.spq",
-      "comment": "all built-in ops",
-      "match": "\\b(assert|combine|cut|drop|file|fork|from|fuse|get|head|join|load|merge|over|pass|put|rename|sample|search|sort|summarize|switch|tail|top|uniq|where|yield)\\b"
-    },
-    {
-      "name": "support.function.spq",
-      "comment": "all built-in functions",
-      "match": "\\b(abs|base64|bucket|cast|ceil|cidr_match|compare|coalesce|crop|error|every|fields|fill|flatten|floor|grep|grok|has|hex|has_error|is|is_error|join|kind|ksuid|len|levenshtein|log|lower|map|missing|nameof|nest_dotted|network_of|now|order|parse_uri|parse_zson|pow|quiet|regexp|regexp_replace|replace|round|rune_len|shape|split|sqrt|strftime|trim|typename|typeof|typeunder|under|unflatten|upper)\\b"
-    },
-    {
-      "name": "support.function.spq",
-      "comment": "all built-in aggregate functions",
-      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|fuse|max|min|or|sum|union)\\b"
-    },
-    {
-      "name": "support.type.spq",
-      "match": "\\b(uint8|uint16|uint32|uint64|uint128|uint256|int8|int16|int32|int64|int128|int256|duration|time|float16|float32|float64|float128|float256|decimal32|decimal64|decimal128|decimal256|bool|bytes|string|ip|net|type|null)\\b"
-    },
-    {
-      "name": "keyword.operator.spq",
-      "match": "\\b(\\||\\=\\>|\\?|\\:|)\\b"
+      "name": "comment.line.double-slash.spq",
+      "begin": "//",
+      "end": "$"
     },
     {
       "name": "string.quoted.double.spq",
@@ -48,9 +26,30 @@
       "end": "'"
     },
     {
-      "name": "comment.line.double-slash.spq",
-      "begin": "//",
-      "end": "$"
+      "name": "keyword.control.spq",
+      "match": "\\b(const|file|from|func|op|this|type)\\b"
+    },
+    {
+      "name": "entity.name.function.spq",
+      "comment": "all built-in ops",
+      "match": "\\b(assert|combine|cut|drop|file|fork|from|fuse|get|head|join|load|merge|over|pass|put|rename|sample|search|sort|summarize|switch|tail|top|uniq|where|yield)\\b"
+    },
+    {
+      "name": "entity.name.function.spq",
+      "comment": "all built-in functions",
+      "match": "\\b(abs|base64|bucket|cast|ceil|cidr_match|compare|coalesce|crop|error|every|fields|fill|flatten|floor|grep|grok|has|hex|has_error|is|is_error|join|kind|ksuid|len|levenshtein|log|lower|map|missing|nameof|nest_dotted|network_of|now|order|parse_uri|parse_zson|pow|quiet|regexp|regexp_replace|replace|round|rune_len|shape|split|sqrt|strftime|trim|typename|typeof|typeunder|under|unflatten|upper)\\b"
+    },
+    {
+      "name": "entity.name.function.spq",
+      "comment": "all built-in aggregate functions",
+      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|fuse|max|min|or|sum|union)\\b"
+    },
+    {
+      "name": "support.type.spq",
+      "match": "\\b(uint8|uint16|uint32|uint64|uint128|uint256|int8|int16|int32|int64|int128|int256|duration|time|float16|float32|float64|float128|float256|decimal32|decimal64|decimal128|decimal256|bool|bytes|string|ip|net|type|null)\\b"    },
+    {
+      "name": "constant.numeric.decimal.spq",
+      "match": "\\b[0-9.]+\\b"
     }
   ]
 }

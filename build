@@ -1,5 +1,3 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-
-cp -v ./supersql/spq-tm-scratch.json ./supersql/spq.tmb/Syntaxes/spq.tmLanguage.json
