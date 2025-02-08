@@ -6,9 +6,6 @@
 typing it will suddenly render the string. maybe the ordering of things needs to
 change.) 
 
-[//]: # (TODO: Finish out porting things from Zed Zui syntax)
-[//]: # (TODO: Zed: Add string interpolation)
-[//]: # (TODO: Zed: Add record parsing)
 [//]: # (TODO: Try the original TextMate JSON with ZSON)
 [//]: # (TODO: Folding by parens isn't working? - foldingStartMarker is ignored looks like )
 [//]: # (TODO: Check GitHub issues)
@@ -79,5 +76,3 @@ I don't see much use of `support.*` - Java and C# in the included TextMate
 Bundles plugin (sources) don't use it at all.
 
 `entity.name.function` - appears to be for parsed function names (C#, Javascript)
-
-
