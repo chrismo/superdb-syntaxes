@@ -189,7 +189,7 @@
       "patterns": [
         {
           "name": "constant.character.escape.spq",
-          "match": "\\\\(?:[\\\\\"'nrtbfv]|u[0-9a-fA-F]{4}|u\\{[0-9a-fA-F]+\\})"
+          "match": "\\\\(?:[\\\\\"'nrtbfv]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|u\\{[0-9a-fA-F]+\\})"
         }
       ]
     },
@@ -282,7 +282,7 @@
     "functions-aggregate": {
       "comment": "Aggregate functions (lowercase only, uppercase matches SQL)",
       "name": "support.function.aggregate.spq",
-      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|max|min|or|sum|union)\\b"
+      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|first|last|max|min|or|sum|union)\\b"
     },
     "types": {
       "comment": "Type names from PEG",
@@ -292,7 +292,7 @@
     "durations": {
       "comment": "Duration literals like 1h30m, 500ms",
       "name": "constant.numeric.duration.spq",
-      "match": "-?\\b[0-9]+(\\.[0-9]+)?(ns|us|ms|s|m|h|d|w|y)\\b"
+      "match": "-?\\b[0-9]+(\\.[0-9]+)?(ns|us|ms|s|m|h|d|w|y)([0-9]+(\\.[0-9]+)?(ns|us|ms|s|m|h|d|w|y))*\\b"
     },
     "operators": {
       "patterns": [
@@ -307,6 +307,10 @@
         {
           "name": "keyword.operator.type.spq",
           "match": "::"
+        },
+        {
+          "name": "keyword.operator.arrow.spq",
+          "match": "->"
         },
         {
           "name": "keyword.operator.spread.spq",
@@ -342,7 +346,7 @@
         },
         {
           "name": "constant.numeric.float.spq",
-          "match": "\\b[0-9]+\\.[0-9]*([eE][+-]?[0-9]+)?\\b|\\b\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
+          "match": "\\b[0-9]+\\.[0-9]*([eE][+-]?[0-9]+)?\\b|\\b[0-9]+[eE][+-]?[0-9]+\\b|(?<![\\w])\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
         },
         {
           "name": "constant.numeric.integer.spq",

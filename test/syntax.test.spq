@@ -1,26 +1,40 @@
 -- SYNTAX TEST "source.spq"
 
--- ====================
--- Comments
--- ====================
+-- ============================================================================
+-- COMMENTS
+-- ============================================================================
 
--- this is a comment
+-- single line comment
 -- <- comment.line.double-dash.spq
 
 /* block comment */
 -- <- comment.block.spq
 
--- ====================
--- Constants
--- ====================
+/* multi
+   line
+   block */
+-- <- comment.block.spq
+
+-- ============================================================================
+-- CONSTANTS
+-- ============================================================================
 
 true
+-- <- constant.language.boolean.true.spq
+
+TRUE
 -- <- constant.language.boolean.true.spq
 
 false
 -- <- constant.language.boolean.false.spq
 
+FALSE
+-- <- constant.language.boolean.false.spq
+
 null
+-- <- constant.language.null.spq
+
+NULL
 -- <- constant.language.null.spq
 
 NaN
@@ -29,98 +43,234 @@ NaN
 Inf
 -- <- constant.language.infinity.spq
 
--- ====================
--- Keywords
--- ====================
+-Inf
+-- <- constant.language.infinity.spq
 
-const x = 1
+-- ============================================================================
+-- KEYWORDS - Control
+-- ============================================================================
+
+const
 -- <- keyword.control.spq
 
-fn foo(): (1)
+fn
 -- <- keyword.control.spq
 
-op bar(): (1)
+op
 -- <- keyword.control.spq
 
-type MyType = int64
+type
 -- <- keyword.control.spq
 
-let y = 2
+let
 -- <- keyword.control.spq
 
-lambda x: x
+pragma
+-- <- keyword.control.spq
+
+-- ============================================================================
+-- KEYWORDS - Other
+-- ============================================================================
+
+this
 -- <- keyword.other.spq
 
--- ====================
--- Types
--- ====================
+lambda
+-- <- keyword.other.spq
+
+error
+-- <- keyword.other.spq
+
+enum
+-- <- keyword.other.spq
+
+-- ============================================================================
+-- TYPES - All primitive types
+-- ============================================================================
 
 uint8
+-- <- support.type.spq
+
+uint16
+-- <- support.type.spq
+
+uint32
+-- <- support.type.spq
+
+uint64
+-- <- support.type.spq
+
+int8
+-- <- support.type.spq
+
+int16
+-- <- support.type.spq
+
+int32
 -- <- support.type.spq
 
 int64
 -- <- support.type.spq
 
-float64
+float16
 -- <- support.type.spq
 
-string
+float32
+-- <- support.type.spq
+
+float64
 -- <- support.type.spq
 
 bool
 -- <- support.type.spq
 
+bytes
+-- <- support.type.spq
+
+string
+-- <- support.type.spq
+
+ip
+-- <- support.type.spq
+
+net
+-- <- support.type.spq
+
 duration
 -- <- support.type.spq
 
--- ====================
--- Pipeline Operators
--- ====================
+time
+-- <- support.type.spq
 
-from
--- <- support.function.operator.spq
-
-where
--- <- support.function.operator.spq
-
-sort
--- <- support.function.operator.spq
-
-head
--- <- support.function.operator.spq
-
-yield
--- <- support.function.operator.spq
-
-summarize
--- <- support.function.operator.spq
+-- ============================================================================
+-- PIPELINE OPERATORS - All operators
+-- ============================================================================
 
 aggregate
+-- <- support.function.operator.spq
+
+assert
+-- <- support.function.operator.spq
+
+call
+-- <- support.function.operator.spq
+
+cut
+-- <- support.function.operator.spq
+
+debug
+-- <- support.function.operator.spq
+
+drop
+-- <- support.function.operator.spq
+
+explode
 -- <- support.function.operator.spq
 
 fork
 -- <- support.function.operator.spq
 
-switch
+from
 -- <- support.function.operator.spq
 
-skip
+fuse
+-- <- support.function.operator.spq
+
+head
+-- <- support.function.operator.spq
+
+join
+-- <- support.function.operator.spq
+
+load
+-- <- support.function.operator.spq
+
+merge
+-- <- support.function.operator.spq
+
+output
+-- <- support.function.operator.spq
+
+over
+-- <- support.function.operator.spq
+
+pass
+-- <- support.function.operator.spq
+
+put
+-- <- support.function.operator.spq
+
+rename
+-- <- support.function.operator.spq
+
+sample
+-- <- support.function.operator.spq
+
+search
 -- <- support.function.operator.spq
 
 shapes
 -- <- support.function.operator.spq
 
--- ====================
--- Aggregate Functions
--- ====================
+skip
+-- <- support.function.operator.spq
+
+sort
+-- <- support.function.operator.spq
+
+summarize
+-- <- support.function.operator.spq
+
+switch
+-- <- support.function.operator.spq
+
+tail
+-- <- support.function.operator.spq
+
+top
+-- <- support.function.operator.spq
+
+uniq
+-- <- support.function.operator.spq
+
+unnest
+-- <- support.function.operator.spq
+
+where
+-- <- support.function.operator.spq
+
+yield
+-- <- support.function.operator.spq
+
+-- ============================================================================
+-- AGGREGATE FUNCTIONS - All functions
+-- ============================================================================
+
+and
+-- <- support.function.aggregate.spq
+
+any
+-- <- support.function.aggregate.spq
+
+avg
+-- <- support.function.aggregate.spq
+
+collect
+-- <- support.function.aggregate.spq
+
+collect_map
+-- <- support.function.aggregate.spq
 
 count
 -- <- support.function.aggregate.spq
 
-sum
+dcount
 -- <- support.function.aggregate.spq
 
-avg
+first
+-- <- support.function.aggregate.spq
+
+last
 -- <- support.function.aggregate.spq
 
 max
@@ -129,9 +279,18 @@ max
 min
 -- <- support.function.aggregate.spq
 
--- ====================
--- SQL Keywords
--- ====================
+or
+-- <- support.function.aggregate.spq
+
+sum
+-- <- support.function.aggregate.spq
+
+union
+-- <- support.function.aggregate.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Core
+-- ============================================================================
 
 SELECT
 -- <- keyword.other.sql.spq
@@ -145,35 +304,130 @@ WHERE
 GROUP
 -- <- keyword.other.sql.spq
 
+BY
+-- <- keyword.other.sql.spq
+
+HAVING
+-- <- keyword.other.sql.spq
+
 ORDER
 -- <- keyword.other.sql.spq
 
-JOIN
--- <- keyword.other.sql.join.spq
+LIMIT
+-- <- keyword.other.sql.spq
 
-LEFT
+OFFSET
+-- <- keyword.other.sql.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Joins
+-- ============================================================================
+
+JOIN
 -- <- keyword.other.sql.join.spq
 
 INNER
 -- <- keyword.other.sql.join.spq
 
+LEFT
+-- <- keyword.other.sql.join.spq
+
+RIGHT
+-- <- keyword.other.sql.join.spq
+
+CROSS
+-- <- keyword.other.sql.join.spq
+
+ANTI
+-- <- keyword.other.sql.join.spq
+
+FULL
+-- <- keyword.other.sql.join.spq
+
+OUTER
+-- <- keyword.other.sql.join.spq
+
+ON
+-- <- keyword.other.sql.join.spq
+
+USING
+-- <- keyword.other.sql.join.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Set operations
+-- ============================================================================
+
 UNION
+-- <- keyword.other.sql.set.spq
+
+INTERSECT
+-- <- keyword.other.sql.set.spq
+
+EXCEPT
+-- <- keyword.other.sql.set.spq
+
+ALL
 -- <- keyword.other.sql.set.spq
 
 DISTINCT
 -- <- keyword.other.sql.set.spq
 
+-- ============================================================================
+-- SQL KEYWORDS - Clauses
+-- ============================================================================
+
 WITH
+-- <- keyword.other.sql.clause.spq
+
+RECURSIVE
+-- <- keyword.other.sql.clause.spq
+
+MATERIALIZED
 -- <- keyword.other.sql.clause.spq
 
 AS
 -- <- keyword.other.sql.clause.spq
+
+VALUES
+-- <- keyword.other.sql.clause.spq
+
+INTO
+-- <- keyword.other.sql.clause.spq
+
+AT
+-- <- keyword.other.sql.clause.spq
+
+ORDINALITY
+-- <- keyword.other.sql.clause.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Case/Control
+-- ============================================================================
 
 CASE
 -- <- keyword.other.sql.case.spq
 
 WHEN
 -- <- keyword.other.sql.case.spq
+
+THEN
+-- <- keyword.other.sql.case.spq
+
+ELSE
+-- <- keyword.other.sql.case.spq
+
+END
+-- <- keyword.other.sql.case.spq
+
+IF
+-- <- keyword.other.sql.case.spq
+
+DEFAULT
+-- <- keyword.other.sql.case.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Logical
+-- ============================================================================
 
 AND
 -- <- keyword.operator.logical.sql.spq
@@ -184,78 +438,362 @@ OR
 NOT
 -- <- keyword.operator.logical.sql.spq
 
--- ====================
--- Strings
--- ====================
+IN
+-- <- keyword.operator.logical.sql.spq
+
+EXISTS
+-- <- keyword.operator.logical.sql.spq
+
+LIKE
+-- <- keyword.operator.logical.sql.spq
+
+BETWEEN
+-- <- keyword.operator.logical.sql.spq
+
+IS
+-- <- keyword.operator.logical.sql.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Order
+-- ============================================================================
+
+ASC
+-- <- keyword.other.sql.order.spq
+
+DESC
+-- <- keyword.other.sql.order.spq
+
+NULLS
+-- <- keyword.other.sql.order.spq
+
+FIRST
+-- <- keyword.other.sql.order.spq
+
+LAST
+-- <- keyword.other.sql.order.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Window
+-- ============================================================================
+
+OVER
+-- <- keyword.other.sql.window.spq
+
+PARTITION
+-- <- keyword.other.sql.window.spq
+
+ROWS
+-- <- keyword.other.sql.window.spq
+
+RANGE
+-- <- keyword.other.sql.window.spq
+
+UNBOUNDED
+-- <- keyword.other.sql.window.spq
+
+PRECEDING
+-- <- keyword.other.sql.window.spq
+
+FOLLOWING
+-- <- keyword.other.sql.window.spq
+
+CURRENT
+-- <- keyword.other.sql.window.spq
+
+ROW
+-- <- keyword.other.sql.window.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Functions
+-- ============================================================================
+
+EXTRACT
+-- <- keyword.other.sql.function.spq
+
+CAST
+-- <- keyword.other.sql.function.spq
+
+SUBSTRING
+-- <- keyword.other.sql.function.spq
+
+-- ============================================================================
+-- SQL KEYWORDS - Temporal
+-- ============================================================================
+
+DATE
+-- <- keyword.other.sql.temporal.spq
+
+TIMESTAMP
+-- <- keyword.other.sql.temporal.spq
+
+-- ============================================================================
+-- STRINGS - Double quoted
+-- ============================================================================
 
 "double quoted"
 -- <- string.quoted.double.spq
 
+"with escape \n"
+-- <- string.quoted.double.spq
+
+-- ============================================================================
+-- STRINGS - Single quoted
+-- ============================================================================
+
 'single quoted'
 -- <- string.quoted.single.spq
 
-r"raw string"
+'with escape \t'
+-- <- string.quoted.single.spq
+
+-- ============================================================================
+-- STRINGS - Raw
+-- ============================================================================
+
+r"raw double"
 -- <- string.quoted.double.raw.spq
 
 r'raw single'
 -- <- string.quoted.single.raw.spq
 
-f"interpolated {x}"
+-- ============================================================================
+-- STRINGS - F-strings (interpolated)
+-- ============================================================================
+
+f"hello {name}"
 -- <- string.interpolated.double.spq
 
-f'interpolated {y}'
+f'count: {n}'
 -- <- string.interpolated.single.spq
 
-`backtick identifier`
+-- ============================================================================
+-- STRINGS - Backtick identifiers
+-- ============================================================================
+
+`field name`
 -- <- variable.other.quoted.spq
 
--- ====================
--- Numbers
--- ====================
+`with-dashes`
+-- <- variable.other.quoted.spq
+
+-- ============================================================================
+-- STRINGS - Regex literals
+-- ============================================================================
+
+/pattern/
+-- <- string.regexp.spq
+
+/[a-z]+/
+-- <- string.regexp.spq
+
+-- ============================================================================
+-- NUMBERS - Integers
+-- ============================================================================
+
+0
+-- <- constant.numeric.integer.spq
 
 42
 -- <- constant.numeric.integer.spq
 
+123456
+-- <- constant.numeric.integer.spq
+
+-- ============================================================================
+-- NUMBERS - Floats
+-- ============================================================================
+
 3.14
 -- <- constant.numeric.float.spq
+
+0.5
+-- <- constant.numeric.float.spq
+
+.5
+-- <- constant.numeric.float.spq
+
+1.0
+-- <- constant.numeric.float.spq
+
+-- ============================================================================
+-- NUMBERS - Scientific notation
+-- ============================================================================
+
+1e10
+-- <- constant.numeric.float.spq
+
+2.5e-3
+-- <- constant.numeric.float.spq
+
+1E+5
+-- <- constant.numeric.float.spq
+
+-- ============================================================================
+-- NUMBERS - Hexadecimal
+-- ============================================================================
+
+0x0
+-- <- constant.numeric.hex.spq
 
 0xFF
 -- <- constant.numeric.hex.spq
 
--- ====================
--- Durations
--- ====================
+0xDEADBEEF
+-- <- constant.numeric.hex.spq
+
+0x1a2b3c
+-- <- constant.numeric.hex.spq
+
+-- ============================================================================
+-- DURATIONS - All units
+-- ============================================================================
+
+1ns
+-- <- constant.numeric.duration.spq
+
+1us
+-- <- constant.numeric.duration.spq
+
+1ms
+-- <- constant.numeric.duration.spq
+
+1s
+-- <- constant.numeric.duration.spq
+
+1m
+-- <- constant.numeric.duration.spq
 
 1h
 -- <- constant.numeric.duration.spq
 
-30m
+1d
+-- <- constant.numeric.duration.spq
+
+1w
+-- <- constant.numeric.duration.spq
+
+1y
+-- <- constant.numeric.duration.spq
+
+-- ============================================================================
+-- DURATIONS - Combined
+-- ============================================================================
+
+1h30m
 -- <- constant.numeric.duration.spq
 
 500ms
 -- <- constant.numeric.duration.spq
 
--- ====================
--- Operators
--- ====================
+2.5h
+-- <- constant.numeric.duration.spq
+
+-- ============================================================================
+-- DURATIONS - Negative
+-- ============================================================================
+
+-5m
+-- <- constant.numeric.duration.spq
+
+-1h
+-- <- constant.numeric.duration.spq
+
+-- ============================================================================
+-- OPERATORS - Pipe
+-- ============================================================================
 
 |>
 -- <- keyword.operator.pipe.spq
 
+-- ============================================================================
+-- OPERATORS - Assignment
+-- ============================================================================
+
 :=
 -- <- keyword.operator.assignment.spq
+
+-- ============================================================================
+-- OPERATORS - Type
+-- ============================================================================
 
 ::
 -- <- keyword.operator.type.spq
 
+-- ============================================================================
+-- OPERATORS - Arrow (dictionary access)
+-- ============================================================================
+
+->
+-- <- keyword.operator.arrow.spq
+
+-- ============================================================================
+-- OPERATORS - Spread
+-- ============================================================================
+
 ...
 -- <- keyword.operator.spread.spq
 
+-- ============================================================================
+-- OPERATORS - Regex match
+-- ============================================================================
+
 ~
 -- <- keyword.operator.regex-match.spq
+
+-- ============================================================================
+-- OPERATORS - Comparison
+-- ============================================================================
 
 ==
 -- <- keyword.operator.comparison.spq
 
 !=
 -- <- keyword.operator.comparison.spq
+
+<>
+-- <- keyword.operator.comparison.spq
+
+<=
+-- <- keyword.operator.comparison.spq
+
+>=
+-- <- keyword.operator.comparison.spq
+
+<
+-- <- keyword.operator.comparison.spq
+
+>
+-- <- keyword.operator.comparison.spq
+
+=
+-- <- keyword.operator.comparison.spq
+
+-- ============================================================================
+-- OPERATORS - String concatenation
+-- ============================================================================
+
+||
+-- <- keyword.operator.string-concat.spq
+
+-- ============================================================================
+-- OPERATORS - Logical
+-- ============================================================================
+
+!
+-- <- keyword.operator.logical.spq
+
+-- ============================================================================
+-- OPERATORS - Arithmetic
+-- ============================================================================
+
++
+-- <- keyword.operator.arithmetic.spq
+
+-
+-- <- keyword.operator.arithmetic.spq
+
+*
+-- <- keyword.operator.arithmetic.spq
+
+-- Note: / and % are tested inline to avoid regex pattern match
+-- a / b and a % b work correctly in expressions
