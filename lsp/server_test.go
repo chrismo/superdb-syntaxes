@@ -643,3 +643,222 @@ func TestCompletionPrefixMatching(t *testing.T) {
 		})
 	}
 }
+
+func TestCompletionSQLKeywords(t *testing.T) {
+	// Test that SQL keywords are available in completions
+	sqlKeywords := []string{
+		"select", "group", "having", "order", "limit", "offset",
+		"join", "left", "right", "inner", "outer", "on",
+		"case", "when", "then", "else", "end",
+		"and", "or", "not", "in", "like", "between",
+	}
+
+	items := getCompletions("", Position{Line: 0, Character: 0})
+
+	for _, kw := range sqlKeywords {
+		found := false
+		for _, item := range items {
+			if item.Label == kw {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("SQL keyword '%s' not found in completions", kw)
+		}
+	}
+}
+
+func TestCompletionOperators(t *testing.T) {
+	// Test that all operators are available
+	ops := []string{
+		"assert", "combine", "cut", "drop", "fork", "fuse",
+		"head", "join", "merge", "over", "pass", "put",
+		"rename", "sort", "summarize", "tail", "uniq", "where", "yield",
+		// New operators
+		"debug", "explode", "output", "skip", "unnest", "values",
+	}
+
+	items := getCompletions("", Position{Line: 0, Character: 0})
+
+	for _, op := range ops {
+		found := false
+		for _, item := range items {
+			if item.Label == op {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Operator '%s' not found in completions", op)
+		}
+	}
+}
+
+func TestCompletionFunctions(t *testing.T) {
+	// Test that all functions are available
+	funcs := []string{
+		"abs", "cast", "ceil", "floor", "len", "lower", "upper",
+		"split", "trim", "typeof", "coalesce", "has", "grep",
+		// New functions from PEG grammar
+		"date_part", "length", "nullif", "parse_sup", "position",
+	}
+
+	items := getCompletions("test(", Position{Line: 0, Character: 5})
+
+	for _, fn := range funcs {
+		found := false
+		for _, item := range items {
+			if item.Label == fn {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Function '%s' not found in completions", fn)
+		}
+	}
+}
+
+func TestCompletionAggregates(t *testing.T) {
+	// Test that all aggregates are available
+	aggs := []string{
+		"count", "sum", "avg", "min", "max",
+		"collect", "collect_map", "dcount", "union", "any", "fuse",
+	}
+
+	items := getCompletions("summarize(", Position{Line: 0, Character: 10})
+
+	for _, agg := range aggs {
+		found := false
+		for _, item := range items {
+			if item.Label == agg {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Aggregate '%s' not found in completions", agg)
+		}
+	}
+}
+
+func TestCompletionAllTypes(t *testing.T) {
+	// Test that all types are available including new ones
+	allTypes := []string{
+		// Core types
+		"int64", "uint64", "float64", "string", "bool", "bytes",
+		"time", "duration", "ip", "net", "null", "type",
+		// New SQL type aliases
+		"date", "timestamp", "bigint", "smallint", "boolean", "text", "bytea",
+	}
+
+	items := getCompletions("cast(x, ", Position{Line: 0, Character: 8})
+
+	for _, typ := range allTypes {
+		found := false
+		for _, item := range items {
+			if item.Label == typ {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Type '%s' not found in completions", typ)
+		}
+	}
+}
+
+func TestCompletionContext(t *testing.T) {
+	tests := []struct {
+		name     string
+		line     string
+		col      int
+		expected completionContext
+	}{
+		{"general context", "from test", 9, contextGeneral},
+		{"type context after cast", "cast(x, ", 8, contextType},
+		{"type context after ::", "x::", 3, contextType},
+		{"function context in parens", "foo(bar", 7, contextFunction},
+		{"general after closed parens", "foo()", 5, contextGeneral},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := getCompletionContext(tt.line, tt.col)
+			if ctx != tt.expected {
+				t.Errorf("Expected context %d, got %d", tt.expected, ctx)
+			}
+		})
+	}
+}
+
+func TestDiagnosticsValidQueries(t *testing.T) {
+	// Test various valid query patterns
+	validQueries := []string{
+		"from test",
+		"from test | count()",
+		"from test | where x > 5",
+		"from test | sort x",
+		"from test | head 10",
+		"from test | put y := x + 1",
+		"from test | summarize count() by x",
+		"from test | yield {a: 1}",
+	}
+
+	for _, query := range validQueries {
+		t.Run(query, func(t *testing.T) {
+			diagnostics := parseAndGetDiagnostics(query)
+			if len(diagnostics) > 0 {
+				t.Errorf("Expected no diagnostics for valid query, got: %v", diagnostics[0].Message)
+			}
+		})
+	}
+}
+
+func TestDiagnosticsInvalidQueries(t *testing.T) {
+	// Test various invalid query patterns
+	invalidQueries := []string{
+		"from {{{{",
+		"from test |",
+		"| count()",
+		"from test | sort >>>",
+	}
+
+	for _, query := range invalidQueries {
+		t.Run(query, func(t *testing.T) {
+			diagnostics := parseAndGetDiagnostics(query)
+			if len(diagnostics) == 0 {
+				t.Errorf("Expected diagnostics for invalid query: %s", query)
+			}
+		})
+	}
+}
+
+func TestKeywordCount(t *testing.T) {
+	// Verify we have a reasonable number of keywords
+	if len(keywords) < 40 {
+		t.Errorf("Expected at least 40 keywords, got %d", len(keywords))
+	}
+}
+
+func TestOperatorCount(t *testing.T) {
+	// Verify we have a reasonable number of operators
+	if len(operators) < 25 {
+		t.Errorf("Expected at least 25 operators, got %d", len(operators))
+	}
+}
+
+func TestFunctionCount(t *testing.T) {
+	// Verify we have a reasonable number of functions
+	if len(functions) < 50 {
+		t.Errorf("Expected at least 50 functions, got %d", len(functions))
+	}
+}
+
+func TestTypeCount(t *testing.T) {
+	// Verify we have a reasonable number of types
+	if len(types) < 35 {
+		t.Errorf("Expected at least 35 types, got %d", len(types))
+	}
+}

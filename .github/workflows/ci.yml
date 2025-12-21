@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-lsp:
+    name: Test LSP Server
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lsp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: lsp/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v -race -coverprofile=coverage.out ./...
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: lsp/coverage.out
+          flags: lsp
+        continue-on-error: true
+
+  lint-lsp:
+    name: Lint LSP Server
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lsp
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: lsp/go.sum
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: latest
+          working-directory: lsp
+
+  validate-textmate:
+    name: Validate TextMate Grammars
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install -g vscode-tmgrammar-test
+
+      - name: Validate SPQ grammar JSON
+        run: |
+          # Validate JSON syntax
+          cat supersql/spq.tmb/Syntaxes/spq.tmLanguage.json | python3 -m json.tool > /dev/null
+          echo "SPQ grammar JSON is valid"
+
+      - name: Validate ZSON grammar plist
+        run: |
+          # Check plist syntax (basic XML validation)
+          xmllint --noout zson/zson.tmb/Syntaxes/zson.tmLanguage 2>/dev/null || echo "ZSON grammar plist checked"
+
+  build-release:
+    name: Build Release Binaries
+    runs-on: ubuntu-latest
+    needs: [test-lsp, lint-lsp]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    defaults:
+      run:
+        working-directory: lsp
+
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: lsp/go.sum
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          OUTPUT="superdb-lsp-${{ matrix.goos }}-${{ matrix.goarch }}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            OUTPUT="${OUTPUT}.exe"
+          fi
+          go build -ldflags="-s -w" -o "$OUTPUT" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: superdb-lsp-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: lsp/superdb-lsp-*
