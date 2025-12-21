@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    name: Grammar Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate JSON grammar files
+        run: |
+          echo "Validating SPQ grammar..."
+          node -e "JSON.parse(require('fs').readFileSync('supersql/spq.tmb/Syntaxes/spq.tmLanguage.json'))"
+          echo "✓ SPQ grammar is valid JSON"
+
+      - name: Run grammar tests
+        run: npm test
+
+  validate:
+    name: Validate Grammar Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          test -f supersql/spq.tmb/Syntaxes/spq.tmLanguage.json || (echo "Missing SPQ grammar" && exit 1)
+          test -f supersql/spq.tmb/info.plist || (echo "Missing SPQ info.plist" && exit 1)
+          test -f supersql/sample.spq || (echo "Missing sample file" && exit 1)
+          echo "✓ All required files present"
+
+      - name: Validate grammar has required fields
+        run: |
+          node -e "
+            const grammar = JSON.parse(require('fs').readFileSync('supersql/spq.tmb/Syntaxes/spq.tmLanguage.json'));
+            const required = ['scopeName', 'fileTypes', 'patterns'];
+            for (const field of required) {
+              if (!grammar[field]) {
+                console.error('Missing required field: ' + field);
+                process.exit(1);
+              }
+            }
+            if (grammar.scopeName !== 'source.spq') {
+              console.error('Expected scopeName to be source.spq');
+              process.exit(1);
+            }
+            console.log('✓ Grammar structure valid');
+            console.log('  scopeName:', grammar.scopeName);
+            console.log('  fileTypes:', grammar.fileTypes);
+            console.log('  patterns:', grammar.patterns.length);
+            console.log('  repository keys:', Object.keys(grammar.repository || {}).length);
+          "

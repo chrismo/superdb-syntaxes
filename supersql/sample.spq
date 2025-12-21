@@ -1,15 +1,347 @@
-// mmm ... pi
-const pi=3.14
+-- ============================================================
+-- SuperSQL (SPQ) Syntax Showcase
+-- This file demonstrates all supported syntax for testing
+-- ============================================================
 
-// this is a single line comment
-// TODO: gotta to do stuff (no TODO highlighting for free here? bummer)
-op myop(): (
+-- Single-line comment with --
+
+/*
+  Multi-line block comment
+  spanning multiple lines
+*/
+
+-- -----------------------------
+-- Constants and Declarations
+-- -----------------------------
+
+const pi = 3.14159
+const name = "SuperDB"
+const enabled = true
+const disabled = false
+const nothing = null
+const notANumber = NaN
+const infinity = Inf
+const negInfinity = -Inf
+const posInfinity = +Inf
+
+-- Use fn (not func) for functions
+fn double(x): (
+  x * 2
+)
+
+-- Operator definitions
+op myOperator(): (
   over this
-  | s1:='single yield string',s2:="double-quote string"
-  | dur:=duration("3d")
-  | yield {a:int64("5"),b:max(uint64(34)),c:{d:|"a":12|}}
+  | s1 := 'single quote string'
+  | s2 := "double quote string"
+  | dur := 1h30m
+  | yield {a: int64(5), b: max(uint64(34))}
 )
 
-func kcast(): (
-  uint8(2)
+-- Let bindings
+let x = 42
+
+-- Pragma declarations
+pragma some_setting
+
+-- -----------------------------
+-- String Types
+-- -----------------------------
+
+-- Regular strings
+"double quoted with \n escape"
+'single quoted with \t escape'
+
+-- Raw strings (no escape processing)
+r"raw string with \n literal backslash-n"
+r'raw string with \t literal'
+
+-- F-strings (interpolation)
+f"Hello, {name}!"
+f'Count is {count(this)} items'
+f"Nested: {int64(42)}"
+
+-- Backtick identifiers
+`field with spaces`
+`weird-field-name`
+
+-- Regex literals
+/pattern/
+/[a-z]+\d*/
+
+-- -----------------------------
+-- Types (from PEG)
+-- -----------------------------
+
+-- Integer types
+uint8(255)
+int16(-32768)
+int32(2147483647)
+int64(9223372036854775807)
+uint64(0)
+
+-- Float types
+float16(1.5)
+float32(3.14)
+float64(2.718281828)
+
+-- Other types
+bool(true)
+bytes(0x48656C6C6F)
+string("hello world")
+ip(192.168.1.1)
+net(10.0.0.0/8)
+duration(1h30m)
+time(2024-01-15T10:30:00Z)
+
+-- Type annotation operator
+x :: int64
+
+-- -----------------------------
+-- Duration Literals
+-- -----------------------------
+
+1ns
+500us
+100ms
+30s
+5m
+2h
+7d
+52w
+1y
+1h30m
+-5m
+
+-- -----------------------------
+-- Operators
+-- -----------------------------
+
+-- Pipe operators
+from "data.json" |> where status == "active" |> sort timestamp
+
+-- Pipeline with |
+from "data.json"
+  | where status == "active"
+  | cut name, email
+  | sort name
+
+-- Assignment
+result := count()
+
+-- Spread
+{...record, newField: "value"}
+
+-- Comparison (including SQL-style =)
+x == y
+x != y
+x <> y
+x = y
+x < y
+x > y
+x <= y
+x >= y
+
+-- Regex match
+name ~ /pattern/
+name !~ /excluded/
+
+-- String concatenation
+first_name || ' ' || last_name
+
+-- Logical (keyword-based)
+a AND b
+a OR b
+NOT a
+
+-- Arithmetic
+a + b
+a - b
+a * b
+a / b
+a % b
+
+-- -----------------------------
+-- Built-in Operators
+-- -----------------------------
+
+from "input.json"
+  | where status == "ok"
+  | cut id, name, value
+  | sort -value
+  | head 10
+  | skip 5
+
+from "logs.json"
+  | search "error" or "warning"
+  | summarize count() by level
+
+fork (
+  => where type == "A" | yield {category: "alpha"}
+  => where type == "B" | yield {category: "beta"}
 )
+
+switch type (
+  case "user" => yield {kind: "person"}
+  case "org" => yield {kind: "organization"}
+  default => yield {kind: "unknown"}
+)
+
+join left on id == other.id
+
+-- Aggregate operator
+aggregate count(), sum(value) by category
+
+-- Shapes operator
+shapes
+
+-- Debug and output
+debug
+output "results.json"
+
+-- -----------------------------
+-- Aggregate Functions
+-- -----------------------------
+
+summarize
+  total := sum(amount),
+  average := avg(amount),
+  minimum := min(amount),
+  maximum := max(amount),
+  items := count(),
+  distinct_items := dcount(category),
+  all_values := collect(value),
+  value_map := collect_map(key, value),
+  merged := union(tags)
+by category
+
+-- -----------------------------
+-- SQL Syntax
+-- -----------------------------
+
+SELECT id, name, email
+FROM users
+WHERE status = 'active'
+  AND created_at > '2024-01-01'
+ORDER BY name ASC
+LIMIT 100
+
+SELECT
+  category,
+  COUNT(*) AS total,
+  AVG(price) AS avg_price
+FROM products
+WHERE price BETWEEN 10 AND 100
+  AND name LIKE '%widget%'
+GROUP BY category
+HAVING COUNT(*) > 5
+ORDER BY total DESC
+
+-- Joins
+SELECT u.name, o.amount
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+LEFT JOIN addresses a ON u.id = a.user_id
+WHERE o.amount > 100
+
+-- Set operations
+SELECT id FROM table_a
+UNION ALL
+SELECT id FROM table_b
+EXCEPT
+SELECT id FROM excluded
+
+-- CASE expressions
+SELECT
+  id,
+  CASE status
+    WHEN 'active' THEN 'Active User'
+    WHEN 'pending' THEN 'Pending Approval'
+    ELSE 'Unknown'
+  END AS status_label
+FROM users
+
+-- Window functions
+SELECT
+  id,
+  amount,
+  SUM(amount) OVER (PARTITION BY category ORDER BY date) AS running_total
+FROM transactions
+
+-- WITH clause (CTEs)
+WITH MATERIALIZED active_users AS (
+  SELECT * FROM users WHERE status = 'active'
+)
+SELECT * FROM active_users WHERE role = 'admin'
+
+-- EXTRACT and CAST
+SELECT EXTRACT(YEAR FROM created_at) AS year
+SELECT CAST(amount AS float64)
+SELECT SUBSTRING(name FROM 1 FOR 10)
+
+-- DATE and TIMESTAMP
+SELECT DATE '2024-01-15'
+SELECT TIMESTAMP '2024-01-15T10:30:00Z'
+
+-- Ordinality
+SELECT * FROM UNNEST(arr) WITH ORDINALITY
+
+-- -----------------------------
+-- Lambda Expressions
+-- -----------------------------
+
+lambda x: x * 2
+fn x, y: x + y
+
+-- -----------------------------
+-- Complex Expressions
+-- -----------------------------
+
+-- Nested records
+{
+  user: {
+    name: "Alice",
+    email: "alice@example.com",
+    tags: ["admin", "active"]
+  },
+  metadata: {
+    created: now(),
+    version: uint64(1)
+  }
+}
+
+-- Conditional expressions
+status == "active" ? "enabled" : "disabled"
+
+-- Chained operations with mixed syntax
+from "events.json"
+  | where timestamp >= time("2024-01-01")
+  | summarize cnt := count() by hour := bucket(timestamp, 1h)
+  | sort hour
+  | yield {hour, cnt, percentage: float64(cnt) / float64(total) * 100}
+
+-- -----------------------------
+-- Escape Sequences
+-- -----------------------------
+
+"newline: \n"
+"tab: \t"
+"carriage return: \r"
+"backslash: \\"
+"quote: \""
+"unicode: \u0041"
+"extended unicode: \u{1F600}"
+
+-- -----------------------------
+-- Numbers
+-- -----------------------------
+
+42
+-17
+3.14159
+0.001
+.5
+1e10
+2.5e-3
+0xFF
+0xDEADBEEF
