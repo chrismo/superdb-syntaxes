@@ -20,7 +20,7 @@ The LSP server's keyword, function, operator, and type lists are synchronized wi
 - **brimdata/zed aggregate registry**: `runtime/sam/expr/agg/agg.go`
 - **brimdata/zui Monaco syntax**: `apps/superdb-desktop/src/core/zed-syntax.ts`
 
-Last synchronized: December 2024
+Last synchronized: December 21, 2025
 
 ## Installation
 
@@ -184,6 +184,12 @@ lsp/
 
 ### Control Flow
 `case`, `when`, `then`, `else`, `end`, `default`
+
+### Literals
+`true`, `false`, `null`
+
+### Other Keywords
+`asc`, `at`, `call`, `cast`, `desc`, `enum`, `error`, `exists`, `extract`, `fn`, `for`, `lambda`, `materialized`, `nulls`, `first`, `last`, `ordinality`, `pragma`, `recursive`, `shape`, `shapes`, `substring`, `union`, `value`
 
 ### Operators
 `assert`, `combine`, `cut`, `debug`, `drop`, `explode`, `fork`, `fuse`, `get`, `head`, `join`, `load`, `merge`, `output`, `over`, `pass`, `put`, `rename`, `sample`, `search`, `skip`, `sort`, `summarize`, `switch`, `tail`, `top`, `uniq`, `unnest`, `values`, `where`, `yield`

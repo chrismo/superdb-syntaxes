@@ -57,11 +57,36 @@ var keywords = []struct {
 	{"else", "Default case"},
 	{"end", "End case"},
 	{"default", "Default branch"},
-	// Other
+	// Literals
+	{"true", "Boolean true"},
+	{"false", "Boolean false"},
+	{"null", "Null value"},
+	// Other keywords
 	{"aggregate", "Aggregate expression"},
 	{"nulls", "Null ordering"},
 	{"first", "First value"},
 	{"last", "Last value"},
+	{"asc", "Sort ascending"},
+	{"desc", "Sort descending"},
+	{"at", "At location/time"},
+	{"call", "Function call"},
+	{"cast", "Type cast"},
+	{"enum", "Enumeration type"},
+	{"error", "Error value"},
+	{"exists", "SQL EXISTS"},
+	{"extract", "Extract component"},
+	{"fn", "Function shorthand"},
+	{"for", "For iteration"},
+	{"lambda", "Lambda expression"},
+	{"materialized", "Materialized view"},
+	{"ordinality", "WITH ORDINALITY"},
+	{"pragma", "Compiler directive"},
+	{"recursive", "Recursive CTE"},
+	{"shape", "Value shape"},
+	{"shapes", "Get shapes"},
+	{"substring", "Substring function"},
+	{"union", "SQL UNION"},
+	{"value", "Value keyword"},
 }
 
 // Built-in operators/ops - from PEG grammar and zui
