@@ -6,11 +6,21 @@ Language Server Protocol (LSP) implementation for SuperSQL (SPQ), providing real
 
 - **Diagnostics**: Real-time syntax error detection using the brimdata/zed parser
 - **Code Completion**: Intelligent suggestions for:
-  - Keywords (`const`, `from`, `func`, `op`, `type`, etc.)
-  - Operators (`sort`, `where`, `yield`, `count`, `join`, etc.)
-  - Functions (`abs`, `ceil`, `floor`, `len`, `split`, `upper`, etc.)
-  - Aggregate functions (`count`, `sum`, `avg`, `max`, `min`, etc.)
-  - Types (`int64`, `string`, `bool`, `time`, `duration`, etc.)
+  - Keywords (SQL: `select`, `from`, `where`, `join`, `group`, `order`, etc.)
+  - Operators (`sort`, `where`, `yield`, `summarize`, `cut`, `put`, etc.)
+  - Functions (`abs`, `ceil`, `floor`, `len`, `split`, `upper`, `cast`, etc.)
+  - Aggregate functions (`count`, `sum`, `avg`, `max`, `min`, `collect`, etc.)
+  - Types (`int64`, `string`, `bool`, `time`, `duration`, `date`, etc.)
+
+## Grammar Synchronization
+
+The LSP server's keyword, function, operator, and type lists are synchronized with:
+- **brimdata/zed PEG grammar**: `compiler/parser/parser.peg`
+- **brimdata/zed function registry**: `runtime/sam/expr/function/function.go`
+- **brimdata/zed aggregate registry**: `runtime/sam/expr/agg/agg.go`
+- **brimdata/zui Monaco syntax**: `apps/superdb-desktop/src/core/zed-syntax.ts`
+
+Last synchronized: December 2024
 
 ## Installation
 
@@ -158,22 +168,37 @@ lsp/
 └── go.mod           # Go module definition
 ```
 
-## SuperSQL Keywords Reference
+## SuperSQL Reference
 
-### Keywords
-`const`, `file`, `from`, `func`, `op`, `this`, `type`
+### Core Keywords
+`const`, `file`, `from`, `func`, `let`, `op`, `this`, `type`
+
+### SQL Keywords
+`select`, `as`, `by`, `where`, `group`, `having`, `order`, `limit`, `offset`, `with`, `distinct`, `all`, `aggregate`
+
+### Join Keywords
+`join`, `inner`, `left`, `right`, `outer`, `full`, `cross`, `anti`, `on`, `using`
+
+### Logic Keywords
+`and`, `or`, `not`, `in`, `like`, `is`, `between`
+
+### Control Flow
+`case`, `when`, `then`, `else`, `end`, `default`
 
 ### Operators
-`assert`, `combine`, `cut`, `drop`, `file`, `fork`, `from`, `fuse`, `get`, `head`, `join`, `load`, `merge`, `over`, `pass`, `put`, `rename`, `sample`, `search`, `sort`, `summarize`, `switch`, `tail`, `top`, `uniq`, `where`, `yield`
+`assert`, `combine`, `cut`, `debug`, `drop`, `explode`, `fork`, `fuse`, `get`, `head`, `join`, `load`, `merge`, `output`, `over`, `pass`, `put`, `rename`, `sample`, `search`, `skip`, `sort`, `summarize`, `switch`, `tail`, `top`, `uniq`, `unnest`, `values`, `where`, `yield`
 
 ### Functions
-`abs`, `base64`, `bucket`, `cast`, `ceil`, `cidr_match`, `compare`, `coalesce`, `crop`, `error`, `every`, `fields`, `fill`, `flatten`, `floor`, `grep`, `grok`, `has`, `hex`, `has_error`, `is`, `is_error`, `join`, `kind`, `ksuid`, `len`, `levenshtein`, `log`, `lower`, `map`, `missing`, `nameof`, `nest_dotted`, `network_of`, `now`, `order`, `parse_uri`, `parse_zson`, `pow`, `quiet`, `regexp`, `regexp_replace`, `replace`, `round`, `rune_len`, `shape`, `split`, `sqrt`, `strftime`, `trim`, `typename`, `typeof`, `typeunder`, `under`, `unflatten`, `upper`
+`abs`, `base64`, `bucket`, `cast`, `ceil`, `cidr_match`, `coalesce`, `compare`, `crop`, `date_part`, `error`, `every`, `fields`, `fill`, `flatten`, `floor`, `grep`, `grok`, `has`, `has_error`, `hex`, `is`, `is_error`, `join`, `kind`, `ksuid`, `len`, `length`, `levenshtein`, `log`, `lower`, `map`, `max`, `min`, `missing`, `nameof`, `nest_dotted`, `network_of`, `now`, `nullif`, `order`, `parse_sup`, `parse_uri`, `parse_zson`, `position`, `pow`, `quiet`, `regexp`, `regexp_replace`, `replace`, `round`, `rune_len`, `shape`, `split`, `sqrt`, `strftime`, `trim`, `typename`, `typeof`, `typeunder`, `under`, `unflatten`, `upper`
 
 ### Aggregates
 `and`, `any`, `avg`, `collect`, `collect_map`, `count`, `dcount`, `fuse`, `max`, `min`, `or`, `sum`, `union`
 
 ### Types
-`uint8`, `uint16`, `uint32`, `uint64`, `uint128`, `uint256`, `int8`, `int16`, `int32`, `int64`, `int128`, `int256`, `duration`, `time`, `float16`, `float32`, `float64`, `float128`, `float256`, `decimal32`, `decimal64`, `decimal128`, `decimal256`, `bool`, `bytes`, `string`, `ip`, `net`, `type`, `null`
+`uint8`, `uint16`, `uint32`, `uint64`, `uint128`, `uint256`, `int8`, `int16`, `int32`, `int64`, `int128`, `int256`, `float16`, `float32`, `float64`, `float128`, `float256`, `decimal32`, `decimal64`, `decimal128`, `decimal256`, `duration`, `time`, `date`, `timestamp`, `bool`, `bytes`, `string`, `ip`, `net`, `type`, `null`
+
+### SQL Type Aliases
+`bigint`, `smallint`, `boolean`, `text`, `bytea`
 
 ## License
 

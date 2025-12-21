@@ -4,11 +4,12 @@ import (
 	"strings"
 )
 
-// SuperSQL keywords
+// SuperSQL keywords - from PEG grammar
 var keywords = []struct {
 	name   string
 	detail string
 }{
+	// Core keywords
 	{"const", "Declare a constant"},
 	{"file", "File source"},
 	{"from", "Data source"},
@@ -16,9 +17,54 @@ var keywords = []struct {
 	{"op", "Define an operator"},
 	{"this", "Current value reference"},
 	{"type", "Type definition"},
+	{"let", "Variable binding"},
+	// SQL keywords
+	{"select", "Select fields"},
+	{"as", "Alias"},
+	{"by", "Group by field"},
+	{"where", "Filter condition"},
+	{"group", "Group records"},
+	{"having", "Filter groups"},
+	{"order", "Order results"},
+	{"limit", "Limit results"},
+	{"offset", "Skip results"},
+	{"with", "Common table expression"},
+	{"distinct", "Distinct values"},
+	{"all", "All values"},
+	// Join keywords
+	{"join", "Join data sources"},
+	{"inner", "Inner join"},
+	{"left", "Left join"},
+	{"right", "Right join"},
+	{"outer", "Outer join"},
+	{"full", "Full join"},
+	{"cross", "Cross join"},
+	{"anti", "Anti join"},
+	{"on", "Join condition"},
+	{"using", "Join using columns"},
+	// Logic keywords
+	{"and", "Logical AND"},
+	{"or", "Logical OR"},
+	{"not", "Logical NOT"},
+	{"in", "In set"},
+	{"like", "Pattern match"},
+	{"is", "Type check"},
+	{"between", "Range check"},
+	// Control flow
+	{"case", "Case expression"},
+	{"when", "Case condition"},
+	{"then", "Case result"},
+	{"else", "Default case"},
+	{"end", "End case"},
+	{"default", "Default branch"},
+	// Other
+	{"aggregate", "Aggregate expression"},
+	{"nulls", "Null ordering"},
+	{"first", "First value"},
+	{"last", "Last value"},
 }
 
-// Built-in operators/ops
+// Built-in operators/ops - from PEG grammar and zui
 var operators = []struct {
 	name   string
 	detail string
@@ -26,7 +72,9 @@ var operators = []struct {
 	{"assert", "Assert condition"},
 	{"combine", "Combine multiple streams"},
 	{"cut", "Select and reorder fields"},
+	{"debug", "Debug output"},
 	{"drop", "Remove fields from records"},
+	{"explode", "Explode array into records"},
 	{"file", "Read from file"},
 	{"fork", "Fork the data flow"},
 	{"from", "Specify data source"},
@@ -36,23 +84,27 @@ var operators = []struct {
 	{"join", "Join two data sources"},
 	{"load", "Load data into pool"},
 	{"merge", "Merge sorted streams"},
+	{"output", "Output to destination"},
 	{"over", "Iterate over values"},
 	{"pass", "Pass through unchanged"},
 	{"put", "Add/update fields"},
 	{"rename", "Rename fields"},
 	{"sample", "Sample random records"},
 	{"search", "Search expression"},
+	{"skip", "Skip N records"},
 	{"sort", "Sort records"},
 	{"summarize", "Aggregate data"},
 	{"switch", "Conditional branching"},
 	{"tail", "Take last N records"},
 	{"top", "Top N by field"},
 	{"uniq", "Remove duplicates"},
+	{"unnest", "Unnest nested values"},
+	{"values", "Extract values"},
 	{"where", "Filter records"},
 	{"yield", "Output values"},
 }
 
-// Built-in functions
+// Built-in functions - from brimdata/zed function.go
 var functions = []struct {
 	name   string
 	detail string
@@ -63,9 +115,10 @@ var functions = []struct {
 	{"cast", "Cast value to type"},
 	{"ceil", "Ceiling function"},
 	{"cidr_match", "Match IP against CIDR"},
-	{"compare", "Compare two values"},
 	{"coalesce", "First non-null value"},
+	{"compare", "Compare two values"},
 	{"crop", "Crop value to type"},
+	{"date_part", "Extract date component"},
 	{"error", "Create error value"},
 	{"every", "Time bucket interval"},
 	{"fields", "Get record field names"},
@@ -75,26 +128,32 @@ var functions = []struct {
 	{"grep", "Search with pattern"},
 	{"grok", "Parse with grok pattern"},
 	{"has", "Check if field exists"},
-	{"hex", "Hexadecimal conversion"},
 	{"has_error", "Check for error"},
+	{"hex", "Hexadecimal conversion"},
 	{"is", "Type check"},
 	{"is_error", "Check if value is error"},
 	{"join", "Join strings"},
 	{"kind", "Get value kind"},
 	{"ksuid", "Generate KSUID"},
 	{"len", "Length of value"},
+	{"length", "Length of value (alias)"},
 	{"levenshtein", "Levenshtein distance"},
 	{"log", "Logarithm"},
 	{"lower", "Convert to lowercase"},
 	{"map", "Map function over array"},
+	{"max", "Maximum of values"},
+	{"min", "Minimum of values"},
 	{"missing", "Create missing value"},
 	{"nameof", "Get type name"},
 	{"nest_dotted", "Nest dotted field names"},
 	{"network_of", "Get network from IP"},
 	{"now", "Current timestamp"},
+	{"nullif", "Return null if equal"},
 	{"order", "Order type info"},
+	{"parse_sup", "Parse Super format"},
 	{"parse_uri", "Parse URI string"},
 	{"parse_zson", "Parse ZSON string"},
+	{"position", "Find substring position"},
 	{"pow", "Power function"},
 	{"quiet", "Suppress errors"},
 	{"regexp", "Regular expression match"},
@@ -115,7 +174,7 @@ var functions = []struct {
 	{"upper", "Convert to uppercase"},
 }
 
-// Built-in aggregate functions
+// Built-in aggregate functions - from brimdata/zed agg.go
 var aggregates = []struct {
 	name   string
 	detail string
@@ -135,34 +194,42 @@ var aggregates = []struct {
 	{"union", "Union of values"},
 }
 
-// Built-in types
+// Built-in types - from PEG grammar
 var types = []struct {
 	name   string
 	detail string
 }{
+	// Unsigned integers
 	{"uint8", "8-bit unsigned integer"},
 	{"uint16", "16-bit unsigned integer"},
 	{"uint32", "32-bit unsigned integer"},
 	{"uint64", "64-bit unsigned integer"},
 	{"uint128", "128-bit unsigned integer"},
 	{"uint256", "256-bit unsigned integer"},
+	// Signed integers
 	{"int8", "8-bit signed integer"},
 	{"int16", "16-bit signed integer"},
 	{"int32", "32-bit signed integer"},
 	{"int64", "64-bit signed integer"},
 	{"int128", "128-bit signed integer"},
 	{"int256", "256-bit signed integer"},
-	{"duration", "Duration type"},
-	{"time", "Timestamp type"},
+	// Floats
 	{"float16", "16-bit float"},
 	{"float32", "32-bit float"},
 	{"float64", "64-bit float"},
 	{"float128", "128-bit float"},
 	{"float256", "256-bit float"},
+	// Decimals
 	{"decimal32", "32-bit decimal"},
 	{"decimal64", "64-bit decimal"},
 	{"decimal128", "128-bit decimal"},
 	{"decimal256", "256-bit decimal"},
+	// Time types
+	{"duration", "Duration type"},
+	{"time", "Timestamp type"},
+	{"date", "Date type"},
+	{"timestamp", "Timestamp type (alias)"},
+	// Other types
 	{"bool", "Boolean type"},
 	{"bytes", "Byte array type"},
 	{"string", "String type"},
@@ -170,6 +237,12 @@ var types = []struct {
 	{"net", "Network CIDR type"},
 	{"type", "Type type"},
 	{"null", "Null type"},
+	// SQL type aliases
+	{"bigint", "64-bit integer (alias for int64)"},
+	{"smallint", "16-bit integer (alias for int16)"},
+	{"boolean", "Boolean (alias for bool)"},
+	{"text", "Text (alias for string)"},
+	{"bytea", "Byte array (alias for bytes)"},
 }
 
 // getCompletions returns completion items based on the current context
@@ -236,7 +309,7 @@ func getCompletionContext(line string, col int) completionContext {
 
 	// Check if we're after a type cast operator
 	if strings.Contains(prefix, "cast(") ||
-		strings.Contains(prefix, ":") ||
+		strings.Contains(prefix, "::") ||
 		strings.HasSuffix(strings.TrimSpace(prefix), "<") {
 		return contextType
 	}
