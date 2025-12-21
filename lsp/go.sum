@@ -1,0 +1,4 @@
+github.com/brimdata/zed v1.18.0 h1:zgJlsQ6z+SqcJ8rjH2dyuN8cK+ovErzM5oMJxxiiIWQ=
+github.com/brimdata/zed v1.18.0/go.mod h1:DsN4jhoF1EvqHhzMTSz1GJGltBMh2iQeV1/GVEeeso0=
+github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
+github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
