@@ -12,8 +12,10 @@ import (
 )
 
 // Version information - update on each release
+// Format: 0.YMMDD where Y=last digit of year, MM=month, DD=day
+// Based on latest brimdata/zed commit date
 const (
-	Version   = "0.1.0"
+	Version   = "0.51218"
 	BuildDate = "" // Set via ldflags: -X main.BuildDate=2025-12-21
 )
 
