@@ -213,7 +213,7 @@
         },
         {
           "name": "constant.language.infinity.spq",
-          "match": "-?\\b(Inf)\\b"
+          "match": "[+-]?\\b(Inf)\\b"
         }
       ]
     },
@@ -266,7 +266,7 @@
         },
         {
           "name": "keyword.other.sql.function.spq",
-          "match": "(?i)\\b(EXTRACT|CAST|SUBSTRING)\\b"
+          "match": "(?i)\\b(EXTRACT|CAST|SUBSTRING|FOR)\\b"
         },
         {
           "name": "keyword.other.sql.temporal.spq",
@@ -318,7 +318,7 @@
         },
         {
           "name": "keyword.operator.regex-match.spq",
-          "match": "~"
+          "match": "!~|~"
         },
         {
           "name": "keyword.operator.comparison.spq",
