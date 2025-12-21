@@ -1,0 +1,261 @@
+-- SYNTAX TEST "source.spq"
+
+-- ====================
+-- Comments
+-- ====================
+
+-- this is a comment
+-- <- comment.line.double-dash.spq
+
+/* block comment */
+-- <- comment.block.spq
+
+-- ====================
+-- Constants
+-- ====================
+
+true
+-- <- constant.language.boolean.true.spq
+
+false
+-- <- constant.language.boolean.false.spq
+
+null
+-- <- constant.language.null.spq
+
+NaN
+-- <- constant.language.nan.spq
+
+Inf
+-- <- constant.language.infinity.spq
+
+-- ====================
+-- Keywords
+-- ====================
+
+const x = 1
+-- <- keyword.control.spq
+
+fn foo(): (1)
+-- <- keyword.control.spq
+
+op bar(): (1)
+-- <- keyword.control.spq
+
+type MyType = int64
+-- <- keyword.control.spq
+
+let y = 2
+-- <- keyword.control.spq
+
+lambda x: x
+-- <- keyword.other.spq
+
+-- ====================
+-- Types
+-- ====================
+
+uint8
+-- <- support.type.spq
+
+int64
+-- <- support.type.spq
+
+float64
+-- <- support.type.spq
+
+string
+-- <- support.type.spq
+
+bool
+-- <- support.type.spq
+
+duration
+-- <- support.type.spq
+
+-- ====================
+-- Pipeline Operators
+-- ====================
+
+from
+-- <- support.function.operator.spq
+
+where
+-- <- support.function.operator.spq
+
+sort
+-- <- support.function.operator.spq
+
+head
+-- <- support.function.operator.spq
+
+yield
+-- <- support.function.operator.spq
+
+summarize
+-- <- support.function.operator.spq
+
+aggregate
+-- <- support.function.operator.spq
+
+fork
+-- <- support.function.operator.spq
+
+switch
+-- <- support.function.operator.spq
+
+skip
+-- <- support.function.operator.spq
+
+shapes
+-- <- support.function.operator.spq
+
+-- ====================
+-- Aggregate Functions
+-- ====================
+
+count
+-- <- support.function.aggregate.spq
+
+sum
+-- <- support.function.aggregate.spq
+
+avg
+-- <- support.function.aggregate.spq
+
+max
+-- <- support.function.aggregate.spq
+
+min
+-- <- support.function.aggregate.spq
+
+-- ====================
+-- SQL Keywords
+-- ====================
+
+SELECT
+-- <- keyword.other.sql.spq
+
+FROM
+-- <- keyword.other.sql.spq
+
+WHERE
+-- <- keyword.other.sql.spq
+
+GROUP
+-- <- keyword.other.sql.spq
+
+ORDER
+-- <- keyword.other.sql.spq
+
+JOIN
+-- <- keyword.other.sql.join.spq
+
+LEFT
+-- <- keyword.other.sql.join.spq
+
+INNER
+-- <- keyword.other.sql.join.spq
+
+UNION
+-- <- keyword.other.sql.set.spq
+
+DISTINCT
+-- <- keyword.other.sql.set.spq
+
+WITH
+-- <- keyword.other.sql.clause.spq
+
+AS
+-- <- keyword.other.sql.clause.spq
+
+CASE
+-- <- keyword.other.sql.case.spq
+
+WHEN
+-- <- keyword.other.sql.case.spq
+
+AND
+-- <- keyword.operator.logical.sql.spq
+
+OR
+-- <- keyword.operator.logical.sql.spq
+
+NOT
+-- <- keyword.operator.logical.sql.spq
+
+-- ====================
+-- Strings
+-- ====================
+
+"double quoted"
+-- <- string.quoted.double.spq
+
+'single quoted'
+-- <- string.quoted.single.spq
+
+r"raw string"
+-- <- string.quoted.double.raw.spq
+
+r'raw single'
+-- <- string.quoted.single.raw.spq
+
+f"interpolated {x}"
+-- <- string.interpolated.double.spq
+
+f'interpolated {y}'
+-- <- string.interpolated.single.spq
+
+`backtick identifier`
+-- <- variable.other.quoted.spq
+
+-- ====================
+-- Numbers
+-- ====================
+
+42
+-- <- constant.numeric.integer.spq
+
+3.14
+-- <- constant.numeric.float.spq
+
+0xFF
+-- <- constant.numeric.hex.spq
+
+-- ====================
+-- Durations
+-- ====================
+
+1h
+-- <- constant.numeric.duration.spq
+
+30m
+-- <- constant.numeric.duration.spq
+
+500ms
+-- <- constant.numeric.duration.spq
+
+-- ====================
+-- Operators
+-- ====================
+
+|>
+-- <- keyword.operator.pipe.spq
+
+:=
+-- <- keyword.operator.assignment.spq
+
+::
+-- <- keyword.operator.type.spq
+
+...
+-- <- keyword.operator.spread.spq
+
+~
+-- <- keyword.operator.regex-match.spq
+
+==
+-- <- keyword.operator.comparison.spq
+
+!=
+-- <- keyword.operator.comparison.spq

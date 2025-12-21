@@ -1,77 +1,89 @@
-// ============================================================
-// SuperSQL (SPQ) Syntax Showcase
-// This file demonstrates all supported syntax for testing
-// ============================================================
+-- ============================================================
+-- SuperSQL (SPQ) Syntax Showcase
+-- This file demonstrates all supported syntax for testing
+-- ============================================================
 
-// Single-line comment with //
--- Single-line comment with -- (SQL style)
+-- Single-line comment with --
 
 /*
   Multi-line block comment
   spanning multiple lines
 */
 
-// -----------------------------
-// Constants and Declarations
-// -----------------------------
+-- -----------------------------
+-- Constants and Declarations
+-- -----------------------------
 
 const pi = 3.14159
 const name = "SuperDB"
 const enabled = true
 const disabled = false
 const nothing = null
+const notANumber = NaN
+const infinity = Inf
 
-// -----------------------------
-// Operator Definitions
-// -----------------------------
+-- Use fn (not func) for functions
+fn double(x): (
+  x * 2
+)
 
+-- Operator definitions
 op myOperator(): (
   over this
   | s1 := 'single quote string'
   | s2 := "double quote string"
-  | dur := duration("3d")
-  | yield {a: int64("5"), b: max(uint64(34))}
+  | dur := 1h30m
+  | yield {a: int64(5), b: max(uint64(34))}
 )
 
-// -----------------------------
-// Function Definitions
-// -----------------------------
+-- Let bindings
+let x = 42
 
-func double(x): (
-  x * 2
-)
+-- Pragma declarations
+pragma some_setting
 
-func castToUint8(): (
-  uint8(2)
-)
+-- -----------------------------
+-- String Types
+-- -----------------------------
 
-// -----------------------------
-// F-strings (Template Strings)
-// -----------------------------
+-- Regular strings
+"double quoted with \n escape"
+'single quoted with \t escape'
 
-const greeting = f"Hello, {name}!"
-const info = f'Count is {count(this)} items'
-const nested = f"Value: {uint64(42)}"
+-- Raw strings (no escape processing)
+r"raw string with \n literal backslash-n"
+r'raw string with \t literal'
 
-// -----------------------------
-// Types and Casting
-// -----------------------------
+-- F-strings (interpolation)
+f"Hello, {name}!"
+f'Count is {count(this)} items'
+f"Nested: {int64(42)}"
 
-// Integer types
+-- Backtick identifiers
+`field with spaces`
+`weird-field-name`
+
+-- Regex literals
+/pattern/
+/[a-z]+\d*/
+
+-- -----------------------------
+-- Types (from PEG)
+-- -----------------------------
+
+-- Integer types
 uint8(255)
 int16(-32768)
 int32(2147483647)
 int64(9223372036854775807)
-uint128(340282366920938463463374607431768211455)
-int256(0)
+uint64(0)
 
-// Float types
+-- Float types
+float16(1.5)
 float32(3.14)
 float64(2.718281828)
-decimal64(99.99)
-decimal128(123456789.123456789)
 
-// Other types
+-- Other types
 bool(true)
 bytes(0x48656C6C6F)
 string("hello world")
@@ -80,59 +92,82 @@ net(10.0.0.0/8)
 duration(1h30m)
 time(2024-01-15T10:30:00Z)
 
-// Type casting operators
+-- Type annotation operator
 x :: int64
-y :> string
 
-// -----------------------------
-// Operators
-// -----------------------------
+-- -----------------------------
+-- Duration Literals
+-- -----------------------------
 
-// Pipe operators
+1ns
+500us
+100ms
+30s
+5m
+2h
+7d
+52w
+1y
+1h30m
+-5m
+
+-- -----------------------------
+-- Operators
+-- -----------------------------
+
+-- Pipe operators
 from "data.json" |> where status == "active" |> sort timestamp
 
-// Pipeline with |
+-- Pipeline with |
 from "data.json"
   | where status == "active"
   | cut name, email
   | sort name
 
-// Assignment
+-- Assignment
 result := count()
 
-// Spread
+-- Spread
 {...record, newField: "value"}
 
-// Comparison
+-- Comparison (including SQL-style =)
 x == y
 x != y
 x <> y
+x = y
 x < y
 x > y
 x <= y
 x >= y
 
-// Logical
-a && b
-a || b
-!a
+-- Regex match
+name ~ /pattern/
 
-// Arithmetic
+-- String concatenation
+first_name || ' ' || last_name
+
+-- Logical (keyword-based)
+a AND b
+a OR b
+NOT a
+
+-- Arithmetic
 a + b
 a - b
 a * b
 a / b
 a % b
 
-// -----------------------------
-// Built-in Operators
-// -----------------------------
+-- -----------------------------
+-- Built-in Operators
+-- -----------------------------
 
 from "input.json"
   | where status == "ok"
   | cut id, name, value
   | sort -value
   | head 10
+  | skip 5
 
 from "logs.json"
   | search "error" or "warning"
@@ -151,58 +186,19 @@ switch type (
 
 join left on id == other.id
 
-// -----------------------------
-// Built-in Functions
-// -----------------------------
+-- Aggregate operator
+aggregate count(), sum(value) by category
 
-// String functions
-lower("HELLO")
-upper("hello")
-trim("  spaced  ")
-split("a,b,c", ",")
-replace("hello", "l", "L")
-len("test")
-strftime(now(), "%Y-%m-%d")
+-- Shapes operator
+shapes
 
-// Math functions
-abs(-42)
-ceil(3.2)
-floor(3.8)
-round(3.5)
-sqrt(16)
-pow(2, 10)
-log(100)
+-- Debug and output
+debug
+output "results.json"
 
-// Type functions
-typeof(value)
-typename(value)
-kind(value)
-is(value, <int64>)
-has(record, "field")
-missing(record, "field")
-cast(value, <string>)
-
-// Network functions
-cidr_match(10.0.0.1, 10.0.0.0/8)
-network_of(10.0.0.1)
-parse_uri("https://example.com/path")
-
-// Data functions
-flatten(nested_array)
-unflatten(record)
-fields(record)
-shape(value)
-coalesce(a, b, c)
-
-// Error handling
-error("something went wrong")
-has_error(value)
-is_error(value)
-quiet(risky_operation)
-
-// -----------------------------
-// Aggregate Functions
-// -----------------------------
+-- -----------------------------
+-- Aggregate Functions
+-- -----------------------------
 
 summarize
   total := sum(amount),
@@ -216,9 +212,9 @@ summarize
   merged := union(tags)
 by category
 
-// -----------------------------
-// SQL Syntax
-// -----------------------------
+-- -----------------------------
+-- SQL Syntax
+-- -----------------------------
 
 SELECT id, name, email
 FROM users
@@ -270,24 +266,35 @@ SELECT
 FROM transactions
 
 -- WITH clause (CTEs)
-WITH active_users AS (
+WITH MATERIALIZED active_users AS (
   SELECT * FROM users WHERE status = 'active'
 )
 SELECT * FROM active_users WHERE role = 'admin'
 
-// -----------------------------
-// Lambda Expressions
-// -----------------------------
+-- EXTRACT and CAST
+SELECT EXTRACT(YEAR FROM created_at) AS year
+SELECT CAST(amount AS float64)
+SELECT SUBSTRING(name FROM 1 FOR 10)
+
+-- DATE and TIMESTAMP
+SELECT DATE '2024-01-15'
+SELECT TIMESTAMP '2024-01-15T10:30:00Z'
+
+-- Ordinality
+SELECT * FROM UNNEST(arr) WITH ORDINALITY
+
+-- -----------------------------
+-- Lambda Expressions
+-- -----------------------------
 
 lambda x: x * 2
 fn x, y: x + y
-map(items, lambda x: x.value)
 
-// -----------------------------
-// Complex Expressions
-// -----------------------------
+-- -----------------------------
+-- Complex Expressions
+-- -----------------------------
 
-// Nested records
+-- Nested records
 {
   user: {
     name: "Alice",
@@ -300,36 +307,37 @@ map(items, lambda x: x.value)
   }
 }
 
-// Conditional expressions
+-- Conditional expressions
 status == "active" ? "enabled" : "disabled"
 
-// Chained operations with mixed syntax
+-- Chained operations with mixed syntax
 from "events.json"
   | where timestamp >= time("2024-01-01")
-  | summarize count := count() by hour := bucket(timestamp, 1h)
+  | summarize cnt := count() by hour := bucket(timestamp, 1h)
   | sort hour
-  | yield {hour, count, percentage: float64(count) / float64(total) * 100}
+  | yield {hour, cnt, percentage: float64(cnt) / float64(total) * 100}
 
-// -----------------------------
-// Escape Sequences
-// -----------------------------
+-- -----------------------------
+-- Escape Sequences
+-- -----------------------------
 
 "newline: \n"
 "tab: \t"
 "carriage return: \r"
 "backslash: \\"
 "quote: \""
-"hex: \x41"
 "unicode: \u0041"
+"extended unicode: \u{1F600}"
 
-// -----------------------------
-// Numbers
-// -----------------------------
+-- -----------------------------
+-- Numbers
+-- -----------------------------
 
 42
 -17
 3.14159
 0.001
+.5
 1e10
 2.5e-3
 0xFF

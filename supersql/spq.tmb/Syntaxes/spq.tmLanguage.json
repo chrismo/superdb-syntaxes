@@ -7,25 +7,24 @@
   "foldingStopMarker": "^\\s*\\)",
   "patterns": [
     { "include": "#comments" },
+    { "include": "#regex" },
     { "include": "#fstrings" },
+    { "include": "#raw-strings" },
     { "include": "#strings" },
+    { "include": "#backtick-identifiers" },
     { "include": "#constants" },
     { "include": "#keywords" },
-    { "include": "#sql-keywords" },
     { "include": "#operators-builtin" },
-    { "include": "#functions-builtin" },
     { "include": "#functions-aggregate" },
+    { "include": "#sql-keywords" },
     { "include": "#types" },
+    { "include": "#durations" },
     { "include": "#operators" },
     { "include": "#numbers" }
   ],
   "repository": {
     "comments": {
       "patterns": [
-        {
-          "name": "comment.line.double-slash.spq",
-          "match": "//.*$"
-        },
         {
           "name": "comment.line.double-dash.spq",
           "match": "--.*$"
@@ -37,6 +36,23 @@
           "captures": {
             "0": { "name": "punctuation.definition.comment.spq" }
           }
+        }
+      ]
+    },
+    "regex": {
+      "name": "string.regexp.spq",
+      "begin": "(?<![\\w)])/(?![/*])",
+      "end": "/",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.spq" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.end.spq" }
+      },
+      "patterns": [
+        {
+          "name": "constant.character.escape.spq",
+          "match": "\\\\."
         }
       ]
     },
@@ -100,6 +116,32 @@
         }
       ]
     },
+    "raw-strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.raw.spq",
+          "begin": "r\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.spq" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.spq" }
+          }
+        },
+        {
+          "name": "string.quoted.single.raw.spq",
+          "begin": "r'",
+          "end": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.spq" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.spq" }
+          }
+        }
+      ]
+    },
     "strings": {
       "patterns": [
         {
@@ -132,11 +174,22 @@
         }
       ]
     },
+    "backtick-identifiers": {
+      "name": "variable.other.quoted.spq",
+      "begin": "`",
+      "end": "`",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.variable.begin.spq" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.variable.end.spq" }
+      }
+    },
     "string-escapes": {
       "patterns": [
         {
           "name": "constant.character.escape.spq",
-          "match": "\\\\(?:[\\\\\"'nrtbfv0]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})"
+          "match": "\\\\(?:[\\\\\"'nrtbfv]|u[0-9a-fA-F]{4}|u\\{[0-9a-fA-F]+\\})"
         }
       ]
     },
@@ -144,15 +197,23 @@
       "patterns": [
         {
           "name": "constant.language.boolean.true.spq",
-          "match": "\\b(true)\\b"
+          "match": "(?i)\\b(true)\\b"
         },
         {
           "name": "constant.language.boolean.false.spq",
-          "match": "\\b(false)\\b"
+          "match": "(?i)\\b(false)\\b"
         },
         {
           "name": "constant.language.null.spq",
-          "match": "\\b(null)\\b"
+          "match": "(?i)\\b(null)\\b"
+        },
+        {
+          "name": "constant.language.nan.spq",
+          "match": "\\b(NaN)\\b"
+        },
+        {
+          "name": "constant.language.infinity.spq",
+          "match": "-?\\b(Inf)\\b"
         }
       ]
     },
@@ -160,11 +221,11 @@
       "patterns": [
         {
           "name": "keyword.control.spq",
-          "match": "\\b(const|func|op|type)\\b"
+          "match": "(?i)\\b(const|fn|op|type|let|pragma)\\b"
         },
         {
           "name": "keyword.other.spq",
-          "match": "\\b(this|lambda|fn)\\b"
+          "match": "(?i)\\b(this|lambda|error|enum)\\b"
         }
       ]
     },
@@ -185,11 +246,11 @@
         },
         {
           "name": "keyword.other.sql.clause.spq",
-          "match": "(?i)\\b(WITH|RECURSIVE|AS|VALUES|INTO)\\b"
+          "match": "(?i)\\b(WITH|RECURSIVE|MATERIALIZED|AS|VALUES|INTO|AT|ORDINALITY)\\b"
         },
         {
           "name": "keyword.other.sql.case.spq",
-          "match": "(?i)\\b(CASE|WHEN|THEN|ELSE|END)\\b"
+          "match": "(?i)\\b(CASE|WHEN|THEN|ELSE|END|IF|DEFAULT)\\b"
         },
         {
           "name": "keyword.operator.logical.sql.spq",
@@ -202,28 +263,36 @@
         {
           "name": "keyword.other.sql.window.spq",
           "match": "(?i)\\b(OVER|PARTITION|ROWS|RANGE|UNBOUNDED|PRECEDING|FOLLOWING|CURRENT|ROW)\\b"
+        },
+        {
+          "name": "keyword.other.sql.function.spq",
+          "match": "(?i)\\b(EXTRACT|CAST|SUBSTRING)\\b"
+        },
+        {
+          "name": "keyword.other.sql.temporal.spq",
+          "match": "(?i)\\b(DATE|TIMESTAMP)\\b"
         }
       ]
     },
     "operators-builtin": {
-      "comment": "Built-in pipeline operators",
+      "comment": "Built-in pipeline operators (lowercase only, uppercase matches SQL)",
       "name": "support.function.operator.spq",
-      "match": "\\b(assert|combine|cut|debug|drop|explode|file|fork|from|fuse|get|head|join|load|merge|over|pass|put|rename|sample|scope|search|sort|sql|summarize|switch|tail|top|uniq|unnest|where|yield)\\b"
-    },
-    "functions-builtin": {
-      "comment": "Built-in functions",
-      "name": "support.function.spq",
-      "match": "\\b(abs|base64|bucket|cast|ceil|cidr_match|compare|coalesce|crop|error|every|fields|fill|flatten|floor|grep|grok|has|hex|has_error|is|is_error|join|kind|ksuid|len|levenshtein|log|lower|map|missing|nameof|nest_dotted|network_of|now|order|parse_uri|parse_zson|pow|quiet|regexp|regexp_replace|replace|round|rune_len|shape|split|sqrt|strftime|trim|typename|typeof|typeunder|under|unflatten|upper)\\b"
+      "match": "\\b(aggregate|assert|call|cut|debug|drop|explode|fork|from|fuse|head|join|load|merge|output|over|pass|put|rename|sample|search|shapes|skip|sort|summarize|switch|tail|top|uniq|unnest|where|yield)\\b"
     },
     "functions-aggregate": {
-      "comment": "Aggregate functions",
+      "comment": "Aggregate functions (lowercase only, uppercase matches SQL)",
       "name": "support.function.aggregate.spq",
-      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|fuse|max|min|or|sum|union)\\b"
+      "match": "\\b(and|any|avg|collect|collect_map|count|dcount|max|min|or|sum|union)\\b"
     },
     "types": {
-      "comment": "Type names",
+      "comment": "Type names from PEG",
       "name": "support.type.spq",
-      "match": "\\b(uint8|uint16|uint32|uint64|uint128|uint256|int8|int16|int32|int64|int128|int256|float16|float32|float64|float128|float256|decimal32|decimal64|decimal128|decimal256|duration|time|bool|bytes|string|ip|net|type|null|error)\\b"
+      "match": "\\b(uint8|uint16|uint32|uint64|int8|int16|int32|int64|float16|float32|float64|bool|bytes|string|ip|net|type|null|duration|time)\\b"
+    },
+    "durations": {
+      "comment": "Duration literals like 1h30m, 500ms",
+      "name": "constant.numeric.duration.spq",
+      "match": "-?\\b[0-9]+(\\.[0-9]+)?(ns|us|ms|s|m|h|d|w|y)\\b"
     },
     "operators": {
       "patterns": [
@@ -236,20 +305,28 @@
           "match": ":="
         },
         {
-          "name": "keyword.operator.cast.spq",
-          "match": "::|:>"
+          "name": "keyword.operator.type.spq",
+          "match": "::"
         },
         {
           "name": "keyword.operator.spread.spq",
           "match": "\\.\\.\\."
         },
         {
+          "name": "keyword.operator.regex-match.spq",
+          "match": "~"
+        },
+        {
           "name": "keyword.operator.comparison.spq",
-          "match": "==|!=|<>|<=|>=|<|>"
+          "match": "==|!=|<>|<=|>=|<|>|="
+        },
+        {
+          "name": "keyword.operator.string-concat.spq",
+          "match": "\\|\\|"
         },
         {
           "name": "keyword.operator.logical.spq",
-          "match": "&&|\\|\\||!"
+          "match": "!"
         },
         {
           "name": "keyword.operator.arithmetic.spq",
@@ -265,7 +342,7 @@
         },
         {
           "name": "constant.numeric.float.spq",
-          "match": "\\b[0-9]+\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
+          "match": "\\b[0-9]+\\.[0-9]*([eE][+-]?[0-9]+)?\\b|\\b\\.[0-9]+([eE][+-]?[0-9]+)?\\b"
         },
         {
           "name": "constant.numeric.integer.spq",
