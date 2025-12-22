@@ -25,7 +25,7 @@ func (s *Server) handleInitialize(msg RPCMessage) (interface{}, error) {
 		},
 		ServerInfo: &ServerInfo{
 			Name:    "superdb-lsp",
-			Version: "0.1.0",
+			Version: Version,
 		},
 	}
 
