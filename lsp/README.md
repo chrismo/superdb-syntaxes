@@ -51,6 +51,21 @@ go install github.com/superdb/superdb-syntaxes/lsp@latest
 
 The LSP server communicates via stdin/stdout using the Language Server Protocol.
 
+### Quick Test
+
+Try the LSP without editor setup:
+
+```bash
+# Build
+cd lsp && go build -o superdb-lsp .
+
+# Send an initialize request
+echo -e 'Content-Length: 58\r\n\r\n{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
+  | ./superdb-lsp 2>/dev/null
+```
+
+You should see a JSON response with `capabilities` and `serverInfo`.
+
 ### VS Code
 
 Add to your `settings.json`:
@@ -120,6 +135,21 @@ Add to `LSP.sublime-settings`:
   :new-connection (lsp-stdio-connection '("/path/to/superdb-lsp"))
   :major-modes '(spq-mode)
   :server-id 'superdb-lsp))
+```
+
+### Helix
+
+Add to `~/.config/helix/languages.toml`:
+
+```toml
+[[language]]
+name = "spq"
+scope = "source.spq"
+file-types = ["spq"]
+language-servers = ["superdb-lsp"]
+
+[language-server.superdb-lsp]
+command = "/path/to/superdb-lsp"
 ```
 
 ## LSP Capabilities
