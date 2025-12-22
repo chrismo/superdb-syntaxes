@@ -1,14 +1,15 @@
 Perform a full grammar synchronization with upstream brimdata/super.
 
+Use WebFetch or gh instead of curl.
+
 ## Do all of this autonomously:
 
 ### 1. Fetch Latest Grammar & Version
-Fetch from brimdata/zed main branch:
+Fetch from brimdata/super main branch:
 - `compiler/parser/parser.peg` - keywords, operators, types
 - `runtime/sam/expr/function/function.go` - built-in functions
 - `runtime/sam/expr/agg/agg.go` - aggregate functions
-- Also check `brimdata/zui` `apps/superdb-desktop/src/core/zed-syntax.ts` for reference
-- **Get the latest commit date** from `https://api.github.com/repos/brimdata/zed/commits/main`
+- **Get the latest commit date for the PEG parser** from `https://api.github.com/repos/brimdata/super/commits?path=compiler/parser/parser.peg&per_page=1`
 
 ### 2. Compare & Update
 Compare against local files and update if needed:
@@ -16,14 +17,14 @@ Compare against local files and update if needed:
 - `supersql/spq.tmb/Syntaxes/spq.tmLanguage.json` - keep TextMate grammar in sync
 
 ### 3. Update Version
-Calculate version from upstream's latest commit date using format `0.YMMDD`:
+Calculate version from the PEG parser's latest commit date using format `0.YMMDD`:
 - Y = last digit of year (e.g., 2025 → 5)
 - MM = 2-digit month
 - DD = 2-digit day
 - Example: 2025-12-18 → `0.51218`
 
 Update version in:
-- `lsp/main.go` - the `Version` constant
+- `lsp/version.go` - the `Version` constant
 - `supersql/spq.tmb/info.plist` - the version string
 
 ### 4. Test

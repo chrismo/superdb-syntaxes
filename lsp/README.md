@@ -20,7 +20,7 @@ The LSP server's keyword, function, operator, and type lists are synchronized wi
 - **brimdata/zed aggregate registry**: `runtime/sam/expr/agg/agg.go`
 - **brimdata/zui Monaco syntax**: `apps/superdb-desktop/src/core/zed-syntax.ts`
 
-Last synchronized: December 21, 2025
+Last synchronized: December 22, 2025
 
 ## Installation
 
