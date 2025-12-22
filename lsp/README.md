@@ -68,20 +68,14 @@ You should see a JSON response with `capabilities` and `serverInfo`.
 
 ### VS Code
 
+Use a generic LSP client extension like [glspc](https://marketplace.visualstudio.com/items?itemName=APerezMuñoz.lsp-client).
+
 Add to your `settings.json`:
 
 ```json
 {
-  "superdb.lsp.path": "/path/to/superdb-lsp"
-}
-```
-
-Or if using a generic LSP client extension:
-
-```json
-{
-  "languageServerExample.trace.server": "verbose",
-  "languageServerExample.serverPath": "/path/to/superdb-lsp"
+  "glspc.serverCommand": "/path/to/superdb-lsp",
+  "glspc.languageId": "spq"
 }
 ```
 
