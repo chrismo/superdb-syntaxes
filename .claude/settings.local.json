@@ -8,7 +8,13 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:api.github.com)",
       "Bash(go build:*)",
-      "Bash(./superdb-lsp:*)"
+      "Bash(./superdb-lsp:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(cat:*)",
+      "Bash(go get:*)",
+      "Bash(go mod tidy:*)"
     ]
   }
 }
