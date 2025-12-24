@@ -162,6 +162,12 @@ func (s *Server) handleMessage(rawMsg json.RawMessage) (interface{}, error) {
 		return s.handleDidClose(msg)
 	case "textDocument/completion":
 		return s.handleCompletion(msg)
+	case "textDocument/hover":
+		return s.handleHover(msg)
+	case "textDocument/signatureHelp":
+		return s.handleSignatureHelp(msg)
+	case "textDocument/formatting":
+		return s.handleFormatting(msg)
 	default:
 		log.Printf("Unhandled method: %s", msg.Method)
 	}

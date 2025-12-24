@@ -58,9 +58,12 @@ type CompletionItemClientCapabilities struct {
 
 // ServerCapabilities represents the server's capabilities
 type ServerCapabilities struct {
-	TextDocumentSync   int                     `json:"textDocumentSync"`
-	CompletionProvider *CompletionOptions      `json:"completionProvider,omitempty"`
-	DiagnosticProvider *DiagnosticOptions      `json:"diagnosticProvider,omitempty"`
+	TextDocumentSync          int                   `json:"textDocumentSync"`
+	CompletionProvider        *CompletionOptions    `json:"completionProvider,omitempty"`
+	DiagnosticProvider        *DiagnosticOptions    `json:"diagnosticProvider,omitempty"`
+	HoverProvider             bool                  `json:"hoverProvider,omitempty"`
+	SignatureHelpProvider     *SignatureHelpOptions `json:"signatureHelpProvider,omitempty"`
+	DocumentFormattingProvider bool                 `json:"documentFormattingProvider,omitempty"`
 }
 
 // CompletionOptions represents completion provider options
@@ -231,4 +234,90 @@ const (
 type CompletionList struct {
 	IsIncomplete bool             `json:"isIncomplete"`
 	Items        []CompletionItem `json:"items"`
+}
+
+// HoverParams for textDocument/hover
+type HoverParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Position     Position               `json:"position"`
+}
+
+// Hover represents a hover response
+type Hover struct {
+	Contents MarkupContent `json:"contents"`
+	Range    *Range        `json:"range,omitempty"`
+}
+
+// MarkupContent represents formatted content
+type MarkupContent struct {
+	Kind  string `json:"kind"`
+	Value string `json:"value"`
+}
+
+// Markup kinds
+const (
+	MarkupKindPlainText = "plaintext"
+	MarkupKindMarkdown  = "markdown"
+)
+
+// SignatureHelpParams for textDocument/signatureHelp
+type SignatureHelpParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Position     Position               `json:"position"`
+	Context      *SignatureHelpContext  `json:"context,omitempty"`
+}
+
+// SignatureHelpContext provides context for signature help
+type SignatureHelpContext struct {
+	TriggerKind         int    `json:"triggerKind"`
+	TriggerCharacter    string `json:"triggerCharacter,omitempty"`
+	IsRetrigger         bool   `json:"isRetrigger"`
+	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitempty"`
+}
+
+// SignatureHelp represents signature help response
+type SignatureHelp struct {
+	Signatures      []SignatureInformation `json:"signatures"`
+	ActiveSignature int                    `json:"activeSignature,omitempty"`
+	ActiveParameter int                    `json:"activeParameter,omitempty"`
+}
+
+// SignatureInformation represents a function signature
+type SignatureInformation struct {
+	Label         string                 `json:"label"`
+	Documentation *MarkupContent         `json:"documentation,omitempty"`
+	Parameters    []ParameterInformation `json:"parameters,omitempty"`
+}
+
+// ParameterInformation represents a function parameter
+type ParameterInformation struct {
+	Label         [2]int         `json:"label"` // [start, end] offsets in signature label
+	Documentation *MarkupContent `json:"documentation,omitempty"`
+}
+
+// SignatureHelpOptions for server capabilities
+type SignatureHelpOptions struct {
+	TriggerCharacters   []string `json:"triggerCharacters,omitempty"`
+	RetriggerCharacters []string `json:"retriggerCharacters,omitempty"`
+}
+
+// DocumentFormattingParams for textDocument/formatting
+type DocumentFormattingParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Options      FormattingOptions      `json:"options"`
+}
+
+// FormattingOptions specifies formatting preferences
+type FormattingOptions struct {
+	TabSize                int  `json:"tabSize"`
+	InsertSpaces           bool `json:"insertSpaces"`
+	TrimTrailingWhitespace bool `json:"trimTrailingWhitespace,omitempty"`
+	InsertFinalNewline     bool `json:"insertFinalNewline,omitempty"`
+	TrimFinalNewlines      bool `json:"trimFinalNewlines,omitempty"`
+}
+
+// TextEdit represents a text edit
+type TextEdit struct {
+	Range   Range  `json:"range"`
+	NewText string `json:"newText"`
 }

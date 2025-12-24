@@ -861,3 +861,432 @@ func TestTypeCount(t *testing.T) {
 		t.Errorf("Expected at least 35 types, got %d", len(types))
 	}
 }
+
+// Tests for new LSP features
+
+func TestHoverKeyword(t *testing.T) {
+	text := "from test | where x > 5"
+	pos := Position{Line: 0, Character: 13} // over "where"
+
+	hover := getHover(text, pos)
+	if hover == nil {
+		t.Fatal("Expected hover result, got nil")
+	}
+
+	if hover.Contents.Kind != MarkupKindMarkdown {
+		t.Errorf("Expected markdown content, got %s", hover.Contents.Kind)
+	}
+
+	if !strings.Contains(hover.Contents.Value, "where") {
+		t.Errorf("Expected hover to contain 'where', got: %s", hover.Contents.Value)
+	}
+}
+
+func TestHoverFunction(t *testing.T) {
+	text := "from test | put y := ceil(x)"
+	pos := Position{Line: 0, Character: 22} // over "ceil"
+
+	hover := getHover(text, pos)
+	if hover == nil {
+		t.Fatal("Expected hover result, got nil")
+	}
+
+	if !strings.Contains(hover.Contents.Value, "ceil") {
+		t.Errorf("Expected hover to contain 'ceil', got: %s", hover.Contents.Value)
+	}
+}
+
+func TestHoverAggregate(t *testing.T) {
+	text := "from test | summarize count() by x"
+	pos := Position{Line: 0, Character: 23} // over "count"
+
+	hover := getHover(text, pos)
+	if hover == nil {
+		t.Fatal("Expected hover result, got nil")
+	}
+
+	if !strings.Contains(hover.Contents.Value, "count") {
+		t.Errorf("Expected hover to contain 'count', got: %s", hover.Contents.Value)
+	}
+}
+
+func TestHoverType(t *testing.T) {
+	text := "cast(x, int64)"
+	pos := Position{Line: 0, Character: 9} // over "int64"
+
+	hover := getHover(text, pos)
+	if hover == nil {
+		t.Fatal("Expected hover result, got nil")
+	}
+
+	if !strings.Contains(hover.Contents.Value, "int64") {
+		t.Errorf("Expected hover to contain 'int64', got: %s", hover.Contents.Value)
+	}
+}
+
+func TestHoverNoResult(t *testing.T) {
+	text := "from test"
+	pos := Position{Line: 0, Character: 5} // over "test" (not a keyword)
+
+	hover := getHover(text, pos)
+	if hover != nil {
+		t.Errorf("Expected no hover for identifier, got: %v", hover)
+	}
+}
+
+func TestSignatureHelpFunction(t *testing.T) {
+	text := "from test | put y := ceil("
+	pos := Position{Line: 0, Character: 26} // after opening paren
+
+	sigHelp := getSignatureHelp(text, pos)
+	if sigHelp == nil {
+		t.Fatal("Expected signature help, got nil")
+	}
+
+	if len(sigHelp.Signatures) != 1 {
+		t.Fatalf("Expected 1 signature, got %d", len(sigHelp.Signatures))
+	}
+
+	sig := sigHelp.Signatures[0]
+	if !strings.Contains(sig.Label, "ceil") {
+		t.Errorf("Expected signature for 'ceil', got: %s", sig.Label)
+	}
+}
+
+func TestSignatureHelpAggregate(t *testing.T) {
+	text := "from test | summarize sum("
+	pos := Position{Line: 0, Character: 26}
+
+	sigHelp := getSignatureHelp(text, pos)
+	if sigHelp == nil {
+		t.Fatal("Expected signature help, got nil")
+	}
+
+	if len(sigHelp.Signatures) != 1 {
+		t.Fatalf("Expected 1 signature, got %d", len(sigHelp.Signatures))
+	}
+
+	sig := sigHelp.Signatures[0]
+	if !strings.Contains(sig.Label, "sum") {
+		t.Errorf("Expected signature for 'sum', got: %s", sig.Label)
+	}
+}
+
+func TestSignatureHelpMultipleParams(t *testing.T) {
+	text := "replace(s, old, "
+	pos := Position{Line: 0, Character: 16} // after second comma
+
+	sigHelp := getSignatureHelp(text, pos)
+	if sigHelp == nil {
+		t.Fatal("Expected signature help, got nil")
+	}
+
+	if sigHelp.ActiveParameter != 2 {
+		t.Errorf("Expected active parameter 2, got %d", sigHelp.ActiveParameter)
+	}
+}
+
+func TestSignatureHelpNoContext(t *testing.T) {
+	text := "from test | sort x"
+	pos := Position{Line: 0, Character: 18}
+
+	sigHelp := getSignatureHelp(text, pos)
+	if sigHelp != nil {
+		t.Errorf("Expected no signature help outside function call, got: %v", sigHelp)
+	}
+}
+
+func TestFormatBasic(t *testing.T) {
+	input := "from   test  |   count()"
+	expected := "from test\n| count()"
+
+	options := FormattingOptions{
+		TabSize:      2,
+		InsertSpaces: true,
+	}
+
+	result := formatDocument(input, options)
+	if result != expected {
+		t.Errorf("Expected:\n%s\nGot:\n%s", expected, result)
+	}
+}
+
+func TestFormatPreservesComments(t *testing.T) {
+	input := "-- comment\nfrom test"
+
+	options := FormattingOptions{
+		TabSize:      2,
+		InsertSpaces: true,
+	}
+
+	result := formatDocument(input, options)
+	if !strings.Contains(result, "-- comment") {
+		t.Errorf("Expected comment to be preserved, got: %s", result)
+	}
+}
+
+func TestFormatPreservesStrings(t *testing.T) {
+	input := `from test | put x := "hello   world"`
+
+	options := FormattingOptions{
+		TabSize:      2,
+		InsertSpaces: true,
+	}
+
+	result := formatDocument(input, options)
+	if !strings.Contains(result, `"hello   world"`) {
+		t.Errorf("Expected string content to be preserved, got: %s", result)
+	}
+}
+
+func TestFormatPipeOnNewLine(t *testing.T) {
+	input := "from test|count()|sort x"
+
+	options := FormattingOptions{
+		TabSize:      2,
+		InsertSpaces: true,
+	}
+
+	result := formatDocument(input, options)
+	lines := strings.Split(result, "\n")
+	if len(lines) < 3 {
+		t.Errorf("Expected at least 3 lines (one per pipe), got %d: %s", len(lines), result)
+	}
+}
+
+func TestFormatWithFinalNewline(t *testing.T) {
+	input := "from test"
+
+	options := FormattingOptions{
+		TabSize:           2,
+		InsertSpaces:      true,
+		InsertFinalNewline: true,
+	}
+
+	result := formatDocument(input, options)
+	if !strings.HasSuffix(result, "\n") {
+		t.Errorf("Expected final newline, got: %q", result)
+	}
+}
+
+func TestFormatTrimTrailingWhitespace(t *testing.T) {
+	input := "from test   \n| count()   "
+
+	options := FormattingOptions{
+		TabSize:                2,
+		InsertSpaces:           true,
+		TrimTrailingWhitespace: true,
+	}
+
+	result := formatDocument(input, options)
+	lines := strings.Split(result, "\n")
+	for _, line := range lines {
+		if strings.HasSuffix(line, " ") {
+			t.Errorf("Line has trailing whitespace: %q", line)
+		}
+	}
+}
+
+func TestHoverHandler(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open document
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.spq",
+			LanguageID: "spq",
+			Version:    1,
+			Text:       "from test | sort x",
+		},
+	}
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request hover over "sort"
+	hoverParams := HoverParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.spq"},
+		Position:     Position{Line: 0, Character: 13},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/hover", hoverParams)
+	if err != nil {
+		t.Fatalf("Hover failed: %v", err)
+	}
+
+	if response == nil {
+		t.Fatal("Expected hover response, got nil")
+	}
+
+	// Parse hover result
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var hover Hover
+	if err := json.Unmarshal(resultBytes, &hover); err != nil {
+		t.Fatalf("Unmarshal hover: %v", err)
+	}
+
+	if !strings.Contains(hover.Contents.Value, "sort") {
+		t.Errorf("Expected hover to contain 'sort', got: %s", hover.Contents.Value)
+	}
+}
+
+func TestSignatureHelpHandler(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open document
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.spq",
+			LanguageID: "spq",
+			Version:    1,
+			Text:       "from test | put y := ceil(",
+		},
+	}
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request signature help
+	sigParams := SignatureHelpParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.spq"},
+		Position:     Position{Line: 0, Character: 26},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/signatureHelp", sigParams)
+	if err != nil {
+		t.Fatalf("SignatureHelp failed: %v", err)
+	}
+
+	if response == nil {
+		t.Fatal("Expected signature help response, got nil")
+	}
+
+	// Parse signature help result
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var sigHelp SignatureHelp
+	if err := json.Unmarshal(resultBytes, &sigHelp); err != nil {
+		t.Fatalf("Unmarshal signature help: %v", err)
+	}
+
+	if len(sigHelp.Signatures) == 0 {
+		t.Error("Expected at least one signature")
+	}
+}
+
+func TestFormattingHandler(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open document with messy formatting
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.spq",
+			LanguageID: "spq",
+			Version:    1,
+			Text:       "from   test  |  count()",
+		},
+	}
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request formatting
+	formatParams := DocumentFormattingParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.spq"},
+		Options: FormattingOptions{
+			TabSize:      2,
+			InsertSpaces: true,
+		},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/formatting", formatParams)
+	if err != nil {
+		t.Fatalf("Formatting failed: %v", err)
+	}
+
+	if response == nil {
+		t.Fatal("Expected formatting response, got nil")
+	}
+
+	// Parse text edits
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var edits []TextEdit
+	if err := json.Unmarshal(resultBytes, &edits); err != nil {
+		t.Fatalf("Unmarshal edits: %v", err)
+	}
+
+	if len(edits) == 0 {
+		t.Error("Expected at least one edit for messy input")
+	}
+}
+
+func TestInitializeWithNewCapabilities(t *testing.T) {
+	h := NewTestHelper()
+
+	params := InitializeParams{
+		ProcessID: 1234,
+		RootURI:   "file:///test",
+	}
+
+	response, err := h.ProcessRequest(1, "initialize", params)
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var result InitializeResult
+	if err := json.Unmarshal(resultBytes, &result); err != nil {
+		t.Fatalf("Unmarshal result: %v", err)
+	}
+
+	// Check hover capability
+	if !result.Capabilities.HoverProvider {
+		t.Error("Expected HoverProvider to be true")
+	}
+
+	// Check signature help capability
+	if result.Capabilities.SignatureHelpProvider == nil {
+		t.Error("Expected SignatureHelpProvider to be set")
+	}
+
+	// Check formatting capability
+	if !result.Capabilities.DocumentFormattingProvider {
+		t.Error("Expected DocumentFormattingProvider to be true")
+	}
+}

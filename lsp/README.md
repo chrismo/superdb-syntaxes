@@ -11,6 +11,9 @@ Language Server Protocol (LSP) implementation for SuperSQL (SPQ), providing real
   - Functions (`abs`, `ceil`, `floor`, `len`, `split`, `upper`, `cast`, etc.)
   - Aggregate functions (`count`, `sum`, `avg`, `max`, `min`, `collect`, etc.)
   - Types (`int64`, `string`, `bool`, `time`, `duration`, `date`, etc.)
+- **Hover**: Documentation on hover for keywords, functions, operators, types, and aggregates
+- **Signature Help**: Function parameter hints with documentation as you type
+- **Formatting**: Auto-format queries with configurable options (tab size, spaces vs tabs)
 
 ## Grammar Synchronization
 
@@ -160,11 +163,17 @@ command = "/path/to/superdb-lsp"
 | `textDocument/didChange` | Document changed notification |
 | `textDocument/didClose` | Document closed notification |
 | `textDocument/completion` | Code completion request |
+| `textDocument/hover` | Hover documentation request |
+| `textDocument/signatureHelp` | Function signature help request |
+| `textDocument/formatting` | Document formatting request |
 
 ### Server Capabilities
 
 - **Text Document Sync**: Full document sync (mode 1)
 - **Completion Provider**: Triggered by `.`, `|`, `(`, `:`, `=`
+- **Hover Provider**: Documentation for keywords, functions, types, operators
+- **Signature Help Provider**: Triggered by `(` and `,`
+- **Document Formatting Provider**: Formats queries with configurable options
 
 ## Development
 
@@ -192,6 +201,9 @@ lsp/
 ├── handlers.go      # Request/notification handlers
 ├── diagnostics.go   # Parsing and diagnostic generation
 ├── completion.go    # Completion item generation
+├── hover.go         # Hover documentation
+├── signature.go     # Function signature help
+├── format.go        # Document formatting
 ├── server_test.go   # Test harness
 └── go.mod           # Go module definition
 ```
