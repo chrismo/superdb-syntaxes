@@ -27,7 +27,7 @@ The LSP server's keyword, function, operator, and type lists are synchronized wi
 
 These files can be updated independently, so version reflects the latest change to any of them.
 
-Last synchronized: December 22, 2025
+Last synchronized: December 23, 2025
 
 ## Installation
 

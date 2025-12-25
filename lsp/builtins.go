@@ -317,6 +317,12 @@ var allBuiltins = []Builtin{
 		Parameters: []ParamDef{{Name: "value", Doc: "Value to convert"}},
 	},
 	{
+		Name: "is", Kind: KindFunction,
+		Brief: "Type check function", Doc: "Check if a value is of a specific type",
+		Signature: "is(value: any, type: type) -> bool",
+		Parameters: []ParamDef{{Name: "value", Doc: "Value to check"}, {Name: "type", Doc: "Type to check against"}},
+	},
+	{
 		Name: "is_error", Kind: KindFunction,
 		Brief: "Check if value is error", Doc: "Check if a value is an error",
 		Signature: "is_error(value: any) -> bool",
@@ -598,6 +604,18 @@ var allBuiltins = []Builtin{
 		Brief: "Fuse schemas in group", Doc: "Fuse schemas together within a group",
 		Signature: "fuse(value: any) -> type",
 		Parameters: []ParamDef{{Name: "value", Doc: "Values to fuse"}},
+	},
+	{
+		Name: "and", Kind: KindAggregate,
+		Brief: "Logical AND aggregate", Doc: "Returns true if all values in the group are true",
+		Signature: "and(value: bool) -> bool",
+		Parameters: []ParamDef{{Name: "value", Doc: "Boolean values"}},
+	},
+	{
+		Name: "or", Kind: KindAggregate,
+		Brief: "Logical OR aggregate", Doc: "Returns true if any value in the group is true",
+		Signature: "or(value: bool) -> bool",
+		Parameters: []ParamDef{{Name: "value", Doc: "Boolean values"}},
 	},
 
 	// =========================================================================
