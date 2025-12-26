@@ -554,7 +554,7 @@ var allBuiltins = []Builtin{
 	{
 		Name: "count", Kind: KindAggregate,
 		Brief: "Count records", Doc: "Count the number of records in a group",
-		Signature: "count() -> uint64",
+		Signature: "count() -> int64",
 		Parameters: []ParamDef{},
 	},
 	{
