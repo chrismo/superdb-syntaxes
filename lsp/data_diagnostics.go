@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -123,44 +122,4 @@ func cleanDataErrorMessage(errStr string) string {
 	}
 
 	return strings.TrimSpace(result)
-}
-
-// parseDataValues parses a SUP data file and returns the parsed values
-// This is used for formatting and other operations that need the parsed data
-func parseDataValues(text string) ([]*super.Value, error) {
-	var values []*super.Value
-
-	reader := strings.NewReader(text)
-	parser := sup.NewParser(reader)
-	sctx := super.NewContext()
-	analyzer := sup.NewAnalyzer()
-	builder := scode.NewBuilder()
-
-	for {
-		ast, err := parser.ParseValue()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return values, err
-		}
-		if ast == nil {
-			break
-		}
-
-		val, err := analyzer.ConvertValue(sctx, ast)
-		if err != nil {
-			return values, err
-		}
-
-		superVal, err := sup.Build(builder, val)
-		if err != nil {
-			return values, err
-		}
-
-		valueCopy := superVal
-		values = append(values, &valueCopy)
-	}
-
-	return values, nil
 }
