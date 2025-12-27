@@ -1,0 +1,14 @@
+name = "normalize multiple spaces to single space"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+from   test   |   count()
+'''
+
+expected = '''
+from test
+| count()
+'''

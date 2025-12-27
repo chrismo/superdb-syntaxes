@@ -1252,6 +1252,94 @@ func TestFormattingHandler(t *testing.T) {
 	}
 }
 
+func TestSupFileSkipsDiagnostics(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open a .sup file with content that would normally produce parse errors
+	// .sup files contain data sequences, not queries, so they should not be parsed
+	params := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.sup",
+			LanguageID: "sup",
+			Version:    1,
+			Text:       "{name: \"test\", value: 42}\n{name: \"other\", value: 99}",
+		},
+	}
+
+	response, err := h.ProcessNotification("textDocument/didOpen", params)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	if response == nil {
+		t.Fatal("Expected diagnostics notification, got nil")
+	}
+
+	// Parse the diagnostics
+	paramsBytes, err := json.Marshal(response.Params)
+	if err != nil {
+		t.Fatalf("Marshal params: %v", err)
+	}
+
+	var diagParams PublishDiagnosticsParams
+	if err := json.Unmarshal(paramsBytes, &diagParams); err != nil {
+		t.Fatalf("Unmarshal params: %v", err)
+	}
+
+	// .sup files should produce zero diagnostics since parsing is skipped
+	if len(diagParams.Diagnostics) != 0 {
+		t.Errorf("Expected 0 diagnostics for .sup file, got %d: %v",
+			len(diagParams.Diagnostics), diagParams.Diagnostics)
+	}
+}
+
+func TestSupFileCaseInsensitive(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Test with uppercase .SUP extension
+	params := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.SUP",
+			LanguageID: "sup",
+			Version:    1,
+			Text:       "{invalid syntax that would error}",
+		},
+	}
+
+	response, err := h.ProcessNotification("textDocument/didOpen", params)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	paramsBytes, err := json.Marshal(response.Params)
+	if err != nil {
+		t.Fatalf("Marshal params: %v", err)
+	}
+
+	var diagParams PublishDiagnosticsParams
+	if err := json.Unmarshal(paramsBytes, &diagParams); err != nil {
+		t.Fatalf("Unmarshal params: %v", err)
+	}
+
+	// Should still skip parsing for uppercase .SUP
+	if len(diagParams.Diagnostics) != 0 {
+		t.Errorf("Expected 0 diagnostics for .SUP file (case insensitive), got %d",
+			len(diagParams.Diagnostics))
+	}
+}
+
 func TestInitializeWithNewCapabilities(t *testing.T) {
 	h := NewTestHelper()
 

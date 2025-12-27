@@ -1,0 +1,14 @@
+name = "operators get proper spacing"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+from test|where x>5 and y<10
+'''
+
+expected = '''
+from test
+| where x > 5 and y < 10
+'''

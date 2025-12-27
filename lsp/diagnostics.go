@@ -12,7 +12,11 @@ import (
 
 // publishDiagnostics parses the document and publishes diagnostics
 func (s *Server) publishDiagnostics(uri, text string, version int) (interface{}, error) {
-	diagnostics := parseAndGetDiagnostics(text)
+	// Skip query parsing for .sup data files - they contain data sequences, not queries
+	var diagnostics []Diagnostic
+	if !strings.HasSuffix(strings.ToLower(uri), ".sup") {
+		diagnostics = parseAndGetDiagnostics(text)
+	}
 
 	log.Printf("Publishing %d diagnostics for %s", len(diagnostics), uri)
 

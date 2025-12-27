@@ -1,0 +1,14 @@
+name = "whitespace inside strings is preserved"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+from test | put x := "hello   world"
+'''
+
+expected = '''
+from test
+| put x := "hello   world"
+'''

@@ -1,0 +1,15 @@
+name = "each pipe operator gets its own line"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+from test|count()|sort x
+'''
+
+expected = '''
+from test
+| count()
+| sort x
+'''

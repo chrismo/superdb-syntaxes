@@ -1,0 +1,15 @@
+name = "comments are preserved"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+-- this is a comment
+from test
+'''
+
+expected = '''
+-- this is a comment
+from test
+'''

@@ -1,0 +1,14 @@
+name = "handles quoted strings with special chars"
+
+[options]
+tabSize = 2
+insertSpaces = true
+
+input = '''
+from test | where name == "foo's \"bar\""
+'''
+
+expected = '''
+from test
+| where name == "foo's \"bar\""
+'''
