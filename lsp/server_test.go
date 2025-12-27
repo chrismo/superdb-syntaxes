@@ -1308,13 +1308,13 @@ func TestSupFileCaseInsensitive(t *testing.T) {
 		t.Fatalf("Initialize failed: %v", err)
 	}
 
-	// Test with uppercase .SUP extension
+	// Test with uppercase .SUP extension - using valid data
 	params := DidOpenTextDocumentParams{
 		TextDocument: TextDocumentItem{
 			URI:        "file:///test.SUP",
 			LanguageID: "sup",
 			Version:    1,
-			Text:       "{invalid syntax that would error}",
+			Text:       "{name: \"uppercase\", value: 123}",
 		},
 	}
 
@@ -1333,10 +1333,197 @@ func TestSupFileCaseInsensitive(t *testing.T) {
 		t.Fatalf("Unmarshal params: %v", err)
 	}
 
-	// Should still skip parsing for uppercase .SUP
+	// Valid data should produce no diagnostics (case insensitive check)
 	if len(diagParams.Diagnostics) != 0 {
-		t.Errorf("Expected 0 diagnostics for .SUP file (case insensitive), got %d",
-			len(diagParams.Diagnostics))
+		t.Errorf("Expected 0 diagnostics for valid .SUP file (case insensitive), got %d: %v",
+			len(diagParams.Diagnostics), diagParams.Diagnostics)
+	}
+}
+
+func TestSupFileInvalidDataDiagnostics(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open a .sup file with invalid data syntax
+	params := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.sup",
+			LanguageID: "sup",
+			Version:    1,
+			Text:       "{invalid syntax without proper values}",
+		},
+	}
+
+	response, err := h.ProcessNotification("textDocument/didOpen", params)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	paramsBytes, err := json.Marshal(response.Params)
+	if err != nil {
+		t.Fatalf("Marshal params: %v", err)
+	}
+
+	var diagParams PublishDiagnosticsParams
+	if err := json.Unmarshal(paramsBytes, &diagParams); err != nil {
+		t.Fatalf("Unmarshal params: %v", err)
+	}
+
+	// Invalid data should produce diagnostics
+	if len(diagParams.Diagnostics) == 0 {
+		t.Error("Expected diagnostics for invalid .sup data, got none")
+	}
+}
+
+func TestSupFileFormatting(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open a .sup file with unformatted data
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.sup",
+			LanguageID: "sup",
+			Version:    1,
+			Text:       "{name:\"test\",value:42}",
+		},
+	}
+
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request formatting
+	formatParams := DocumentFormattingParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.sup"},
+		Options: FormattingOptions{
+			TabSize:      4,
+			InsertSpaces: true,
+		},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/formatting", formatParams)
+	if err != nil {
+		t.Fatalf("formatting failed: %v", err)
+	}
+
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var edits []TextEdit
+	if err := json.Unmarshal(resultBytes, &edits); err != nil {
+		t.Fatalf("Unmarshal edits: %v", err)
+	}
+
+	// We should get formatting edits
+	if len(edits) == 0 {
+		t.Error("Expected formatting edits for .sup file, got none")
+	}
+
+	// The formatted output should have proper spacing
+	if len(edits) > 0 {
+		formatted := edits[0].NewText
+		// Check that fields are properly spaced
+		if !strings.Contains(formatted, "name:") || !strings.Contains(formatted, "value:") {
+			t.Errorf("Formatted output should have proper structure: %s", formatted)
+		}
+	}
+}
+
+func TestSupFileMultipleValues(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open a .sup file with multiple data values
+	params := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.sup",
+			LanguageID: "sup",
+			Version:    1,
+			Text: `{name: "first", value: 1}
+{name: "second", value: 2}
+{name: "third", value: 3}`,
+		},
+	}
+
+	response, err := h.ProcessNotification("textDocument/didOpen", params)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	paramsBytes, err := json.Marshal(response.Params)
+	if err != nil {
+		t.Fatalf("Marshal params: %v", err)
+	}
+
+	var diagParams PublishDiagnosticsParams
+	if err := json.Unmarshal(paramsBytes, &diagParams); err != nil {
+		t.Fatalf("Unmarshal params: %v", err)
+	}
+
+	// Valid multiple values should produce no diagnostics
+	if len(diagParams.Diagnostics) != 0 {
+		t.Errorf("Expected 0 diagnostics for valid multi-value .sup file, got %d: %v",
+			len(diagParams.Diagnostics), diagParams.Diagnostics)
+	}
+}
+
+func TestSupFileComplexData(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open a .sup file with complex data types
+	params := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.sup",
+			LanguageID: "sup",
+			Version:    1,
+			Text:       `{array: [1, 2, 3], nested: {inner: "value"}, time: 2024-01-15T10:30:00Z}`,
+		},
+	}
+
+	response, err := h.ProcessNotification("textDocument/didOpen", params)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	paramsBytes, err := json.Marshal(response.Params)
+	if err != nil {
+		t.Fatalf("Marshal params: %v", err)
+	}
+
+	var diagParams PublishDiagnosticsParams
+	if err := json.Unmarshal(paramsBytes, &diagParams); err != nil {
+		t.Fatalf("Unmarshal params: %v", err)
+	}
+
+	// Valid complex data should produce no diagnostics
+	if len(diagParams.Diagnostics) != 0 {
+		t.Errorf("Expected 0 diagnostics for valid complex .sup data, got %d: %v",
+			len(diagParams.Diagnostics), diagParams.Diagnostics)
 	}
 }
 

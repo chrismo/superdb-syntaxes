@@ -176,7 +176,14 @@ func (s *Server) handleFormatting(msg RPCMessage) (interface{}, error) {
 	log.Printf("Formatting request: %s (tabSize=%d, insertSpaces=%v)",
 		params.TextDocument.URI, params.Options.TabSize, params.Options.InsertSpaces)
 
-	formatted := formatDocument(text, params.Options)
+	var formatted string
+	if isDataFile(params.TextDocument.URI) {
+		// Format as SUP data file
+		formatted = formatDataDocument(text, params.Options)
+	} else {
+		// Format as SuperSQL query
+		formatted = formatDocument(text, params.Options)
+	}
 
 	// If no changes, return empty array
 	if formatted == text {
