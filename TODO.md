@@ -4,4 +4,4 @@
 
 - [ ] Add version to TextMate bundle filename (`spq-textmate-bundle-v0.51224.2.zip`)
 - [ ] Create a `.sup` TextMate grammar for data file syntax highlighting
-- [ ] Add a VS Code extension build that packages LSP + grammars as a `.vsix`
+- [ ] Create separate VS Code extension repo (like IntelliJ plugin repo) that packages LSP + grammars
