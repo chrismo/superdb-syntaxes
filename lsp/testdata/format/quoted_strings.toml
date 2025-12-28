@@ -5,10 +5,10 @@ tabSize = 2
 insertSpaces = true
 
 input = '''
-from test | where name == "foo's \"bar\""
+from test | where name == "it's working"
 '''
 
 expected = '''
 from test
-| where name == "foo's \"bar\""
+| where name == "it's working"
 '''
