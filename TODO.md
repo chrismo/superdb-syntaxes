@@ -19,15 +19,11 @@ Add setup instructions to README for:
 
 ## Repository Rename
 
-Consider renaming from `superdb-syntaxes` to `superdb-lsp`:
+~~Consider renaming from `superdb-syntaxes` to `superdb-lsp`~~ ✓ Done
 
-- [ ] Decide on rename (recommendation: `superdb-lsp`)
-  - LSP is the more substantial component
-  - Binary already named `superdb-lsp`
-  - Well-known, searchable term
-  - TextMate bundle can live alongside as supporting material
-- [ ] Update GitHub repo name
-- [ ] Update any external references/links
+- [x] Decide on rename (recommendation: `superdb-lsp`)
+- [x] Update internal references
+- [ ] Update GitHub repo name (manual step on GitHub)
 
 ## Format 
 

@@ -1,4 +1,4 @@
-module github.com/superdb/superdb-syntaxes/lsp
+module github.com/superdb/superdb-lsp/lsp
 
 go 1.24.7
 

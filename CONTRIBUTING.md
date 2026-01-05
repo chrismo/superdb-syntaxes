@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This document outlines how to work 
 ## Project Structure
 
 ```
-superdb-syntaxes/
+superdb-lsp/
 ├── supersql/
 │   ├── spq.tmb/                    # TextMate bundle
 │   │   ├── info.plist              # Bundle metadata

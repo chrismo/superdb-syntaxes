@@ -47,7 +47,7 @@ This produces a `superdb-lsp` binary in the current directory.
 ### Installing Globally
 
 ```bash
-go install github.com/superdb/superdb-syntaxes/lsp@latest
+go install github.com/superdb/superdb-lsp/lsp@latest
 ```
 
 ## Usage
