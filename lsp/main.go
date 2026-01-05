@@ -11,19 +11,13 @@ import (
 	"strings"
 )
 
-// BuildDate can be set via ldflags: -X main.BuildDate=2025-12-22
-const BuildDate = ""
-
 // LSP Server for SuperSQL (SPQ) language
 // Provides diagnostics and completion support using brimdata/super/compiler
 
 func main() {
 	// Handle --version flag
 	if len(os.Args) > 1 && (os.Args[1] == "--version" || os.Args[1] == "-v") {
-		fmt.Printf("superdb-lsp %s\n", Version)
-		if BuildDate != "" {
-			fmt.Printf("Build date: %s\n", BuildDate)
-		}
+		fmt.Printf("superdb-lsp %s\n", FullVersion())
 		os.Exit(0)
 	}
 

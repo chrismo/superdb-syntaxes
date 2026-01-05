@@ -20,7 +20,8 @@
       "Bash(gh pr checks:*)",
       "Bash(gh run view:*)",
       "Bash(git -C /Users/chrismo/modev/superdb-intellij add -A)",
-      "Bash(git -C /Users/chrismo/modev/superdb-intellij commit -m \"$\\(cat <<''EOF''\nUpdate LSP repo reference to superdb-lsp\n\nThe LSP repository was renamed from superdb-syntaxes to superdb-lsp.\nUpdate all references in scripts, workflows, and documentation.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git -C /Users/chrismo/modev/superdb-intellij commit -m \"$\\(cat <<''EOF''\nUpdate LSP repo reference to superdb-lsp\n\nThe LSP repository was renamed from superdb-syntaxes to superdb-lsp.\nUpdate all references in scripts, workflows, and documentation.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(gh run:*)"
     ]
   }
 }

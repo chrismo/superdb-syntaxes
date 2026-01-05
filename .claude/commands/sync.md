@@ -46,7 +46,7 @@ Calculate version from the **latest main branch commit date** using format `0.YM
 - Example: 2025-12-24 → `0.51224.0`
 
 Update version in:
-- `lsp/version.go` - the `Version` constant
+- `lsp/version.go` - the `Version` constant and `SuperCommit` constant (short SHA)
 - `supersql/spq.tmbundle/info.plist` - the version string
 
 **Update Go dependency** to the latest main branch commit:

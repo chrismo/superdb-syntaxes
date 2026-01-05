@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.51231.0] - 2026-01-04
+## [0.51231.1] - 2026-01-04
 
 ### Added
 - Keywords: `filter`, `map`
@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - `dcount()` return type from `uint64` to `int64` (matches upstream)
+- Version now includes brimdata/super commit SHA as semver build metadata (e.g., `0.51231.0+5ea0cb5d`)
 
 ### Fixed
 - Renamed TextMate bundle from `.tmb` to `.tmbundle` to fix "unknown format" error in editors
