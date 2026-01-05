@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.51231.0] - 2026-01-04
+
+### Added
+- Keywords: `filter`, `map`
+- Aggregates: `first`, `last` (as aggregate functions)
+- SQL type aliases: `char`, `cidr`, `double`, `float`, `inet`, `int`, `integer`, `interval`, `real`, `varchar`
+
+### Changed
+- `dcount()` return type from `uint64` to `int64` (matches upstream)
 
 ### Fixed
 - Renamed TextMate bundle from `.tmb` to `.tmbundle` to fix "unknown format" error in editors

@@ -266,7 +266,11 @@
         },
         {
           "name": "keyword.other.sql.function.spq",
-          "match": "(?i)\\b(EXTRACT|CAST|SUBSTRING|FOR)\\b"
+          "match": "(?i)\\b(EXTRACT|CAST|SUBSTRING|FOR|FILTER)\\b"
+        },
+        {
+          "name": "keyword.other.sql.type.spq",
+          "match": "(?i)\\b(MAP|VALUE)\\b"
         },
         {
           "name": "keyword.other.sql.temporal.spq",

@@ -183,6 +183,8 @@ var allBuiltins = []Builtin{
 	{Name: "substring", Kind: KindKeyword, Brief: "Substring function"},
 	{Name: "union", Kind: KindKeyword, Brief: "SQL UNION"},
 	{Name: "value", Kind: KindKeyword, Brief: "Value keyword"},
+	{Name: "filter", Kind: KindKeyword, Brief: "Filter expression"},
+	{Name: "map", Kind: KindKeyword, Brief: "Map type constructor"},
 
 	// =========================================================================
 	// OPERATORS (pipeline operators)
@@ -584,7 +586,7 @@ var allBuiltins = []Builtin{
 	{
 		Name: "dcount", Kind: KindAggregate,
 		Brief: "Distinct count", Doc: "Count the number of distinct values",
-		Signature: "dcount(value: any) -> uint64",
+		Signature: "dcount(value: any) -> int64",
 		Parameters: []ParamDef{{Name: "value", Doc: "Values to count"}},
 	},
 	{
@@ -616,6 +618,18 @@ var allBuiltins = []Builtin{
 		Brief: "Logical OR aggregate", Doc: "Returns true if any value in the group is true",
 		Signature: "or(value: bool) -> bool",
 		Parameters: []ParamDef{{Name: "value", Doc: "Boolean values"}},
+	},
+	{
+		Name: "first", Kind: KindAggregate,
+		Brief: "First value in group", Doc: "Return the first value encountered in a group",
+		Signature: "first(value: any) -> any",
+		Parameters: []ParamDef{{Name: "value", Doc: "Values to select from"}},
+	},
+	{
+		Name: "last", Kind: KindAggregate,
+		Brief: "Last value in group", Doc: "Return the last value encountered in a group",
+		Signature: "last(value: any) -> any",
+		Parameters: []ParamDef{{Name: "value", Doc: "Values to select from"}},
 	},
 
 	// =========================================================================
@@ -669,8 +683,18 @@ var allBuiltins = []Builtin{
 	// SQL type aliases
 	{Name: "bigint", Kind: KindType, Brief: "64-bit integer (alias for int64)"},
 	{Name: "smallint", Kind: KindType, Brief: "16-bit integer (alias for int16)"},
+	{Name: "integer", Kind: KindType, Brief: "32-bit integer (alias for int32)"},
+	{Name: "int", Kind: KindType, Brief: "32-bit integer (alias for int32)"},
 	{Name: "boolean", Kind: KindType, Brief: "Boolean (alias for bool)"},
 	{Name: "text", Kind: KindType, Brief: "Text (alias for string)"},
+	{Name: "varchar", Kind: KindType, Brief: "Variable character (alias for string)"},
+	{Name: "char", Kind: KindType, Brief: "Character (alias for string)"},
 	{Name: "bytea", Kind: KindType, Brief: "Byte array (alias for bytes)"},
+	{Name: "real", Kind: KindType, Brief: "32-bit float (alias for float32)"},
+	{Name: "float", Kind: KindType, Brief: "64-bit float (alias for float64)"},
+	{Name: "double", Kind: KindType, Brief: "64-bit float (alias for float64)"},
+	{Name: "inet", Kind: KindType, Brief: "IP address (alias for ip)"},
+	{Name: "cidr", Kind: KindType, Brief: "Network CIDR (alias for net)"},
+	{Name: "interval", Kind: KindType, Brief: "Time interval (alias for duration)"},
 }
 

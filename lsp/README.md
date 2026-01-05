@@ -27,7 +27,7 @@ The LSP server's keyword, function, operator, and type lists are synchronized wi
 
 These files can be updated independently, so version reflects the latest change to any of them.
 
-Last synchronized: December 24, 2025
+Last synchronized: December 31, 2025
 
 ## Installation
 
@@ -229,7 +229,7 @@ lsp/
 `true`, `false`, `null`
 
 ### Other Keywords
-`asc`, `at`, `call`, `cast`, `desc`, `enum`, `error`, `exists`, `extract`, `fn`, `for`, `lambda`, `materialized`, `nulls`, `first`, `last`, `ordinality`, `pragma`, `recursive`, `shape`, `shapes`, `substring`, `union`, `value`
+`asc`, `at`, `call`, `cast`, `desc`, `enum`, `error`, `exists`, `extract`, `filter`, `fn`, `for`, `lambda`, `map`, `materialized`, `nulls`, `first`, `last`, `ordinality`, `pragma`, `recursive`, `shape`, `shapes`, `substring`, `union`, `value`
 
 ### Operators
 `assert`, `cut`, `debug`, `drop`, `explode`, `fork`, `fuse`, `head`, `join`, `load`, `merge`, `output`, `over`, `pass`, `put`, `rename`, `sample`, `search`, `skip`, `sort`, `summarize`, `switch`, `tail`, `top`, `uniq`, `unnest`, `values`, `where`, `yield`
@@ -238,13 +238,13 @@ lsp/
 `abs`, `base64`, `bucket`, `cast`, `ceil`, `cidr_match`, `coalesce`, `compare`, `date_part`, `error`, `fields`, `flatten`, `floor`, `grep`, `grok`, `has`, `has_error`, `hex`, `is`, `is_error`, `join`, `kind`, `ksuid`, `len`, `length`, `levenshtein`, `log`, `lower`, `max`, `min`, `missing`, `nameof`, `nest_dotted`, `network_of`, `now`, `nullif`, `parse_sup`, `parse_uri`, `position`, `pow`, `quiet`, `regexp`, `regexp_replace`, `replace`, `round`, `split`, `sqrt`, `strftime`, `trim`, `typename`, `typeof`, `under`, `unflatten`, `upper`
 
 ### Aggregates
-`and`, `any`, `avg`, `collect`, `collect_map`, `count`, `dcount`, `fuse`, `max`, `min`, `or`, `sum`, `union`
+`and`, `any`, `avg`, `collect`, `collect_map`, `count`, `dcount`, `first`, `fuse`, `last`, `max`, `min`, `or`, `sum`, `union`
 
 ### Types
 `uint8`, `uint16`, `uint32`, `uint64`, `uint128`, `uint256`, `int8`, `int16`, `int32`, `int64`, `int128`, `int256`, `float16`, `float32`, `float64`, `float128`, `float256`, `decimal32`, `decimal64`, `decimal128`, `decimal256`, `duration`, `time`, `date`, `timestamp`, `bool`, `bytes`, `string`, `ip`, `net`, `type`, `null`
 
 ### SQL Type Aliases
-`bigint`, `smallint`, `boolean`, `text`, `bytea`
+`bigint`, `boolean`, `bytea`, `char`, `cidr`, `double`, `float`, `inet`, `int`, `integer`, `interval`, `real`, `smallint`, `text`, `varchar`
 
 ## Roadmap
 
