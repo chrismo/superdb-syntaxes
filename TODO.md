@@ -23,7 +23,7 @@ Add setup instructions to README for:
 
 - [x] Decide on rename (recommendation: `superdb-lsp`)
 - [x] Update internal references
-- [ ] Update GitHub repo name (manual step on GitHub)
+- [x] Update GitHub repo name (manual step on GitHub)
 
 ## Format 
 
