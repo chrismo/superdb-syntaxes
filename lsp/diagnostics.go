@@ -53,6 +53,12 @@ func parseAndGetDiagnostics(text string) []Diagnostic {
 		diagnostics = append(diagnostics, diag)
 	}
 
+	// Add migration diagnostics for deprecated syntax
+	migrationDiags := getMigrationDiagnostics(text)
+	for _, md := range migrationDiags {
+		diagnostics = append(diagnostics, md.Diagnostic)
+	}
+
 	return diagnostics
 }
 

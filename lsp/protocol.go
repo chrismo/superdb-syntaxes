@@ -58,12 +58,13 @@ type CompletionItemClientCapabilities struct {
 
 // ServerCapabilities represents the server's capabilities
 type ServerCapabilities struct {
-	TextDocumentSync          int                   `json:"textDocumentSync"`
-	CompletionProvider        *CompletionOptions    `json:"completionProvider,omitempty"`
-	DiagnosticProvider        *DiagnosticOptions    `json:"diagnosticProvider,omitempty"`
-	HoverProvider             bool                  `json:"hoverProvider,omitempty"`
-	SignatureHelpProvider     *SignatureHelpOptions `json:"signatureHelpProvider,omitempty"`
-	DocumentFormattingProvider bool                 `json:"documentFormattingProvider,omitempty"`
+	TextDocumentSync           int                   `json:"textDocumentSync"`
+	CompletionProvider         *CompletionOptions    `json:"completionProvider,omitempty"`
+	DiagnosticProvider         *DiagnosticOptions    `json:"diagnosticProvider,omitempty"`
+	HoverProvider              bool                  `json:"hoverProvider,omitempty"`
+	SignatureHelpProvider      *SignatureHelpOptions `json:"signatureHelpProvider,omitempty"`
+	DocumentFormattingProvider bool                  `json:"documentFormattingProvider,omitempty"`
+	CodeActionProvider         *CodeActionOptions    `json:"codeActionProvider,omitempty"`
 }
 
 // CompletionOptions represents completion provider options
@@ -320,4 +321,43 @@ type FormattingOptions struct {
 type TextEdit struct {
 	Range   Range  `json:"range"`
 	NewText string `json:"newText"`
+}
+
+// CodeActionParams for textDocument/codeAction
+type CodeActionParams struct {
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	Range        Range                  `json:"range"`
+	Context      CodeActionContext      `json:"context"`
+}
+
+// CodeActionContext provides context for code actions
+type CodeActionContext struct {
+	Diagnostics []Diagnostic `json:"diagnostics"`
+	Only        []string     `json:"only,omitempty"`
+}
+
+// CodeAction represents a code action
+type CodeAction struct {
+	Title       string            `json:"title"`
+	Kind        string            `json:"kind,omitempty"`
+	Diagnostics []Diagnostic      `json:"diagnostics,omitempty"`
+	IsPreferred bool              `json:"isPreferred,omitempty"`
+	Edit        *WorkspaceEdit    `json:"edit,omitempty"`
+	Data        interface{}       `json:"data,omitempty"`
+}
+
+// WorkspaceEdit represents changes to workspace resources
+type WorkspaceEdit struct {
+	Changes map[string][]TextEdit `json:"changes,omitempty"`
+}
+
+// Code action kinds
+const (
+	CodeActionKindQuickFix       = "quickfix"
+	CodeActionKindSourceFixAll   = "source.fixAll"
+)
+
+// CodeActionOptions for server capabilities
+type CodeActionOptions struct {
+	CodeActionKinds []string `json:"codeActionKinds,omitempty"`
 }

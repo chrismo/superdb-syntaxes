@@ -162,6 +162,8 @@ func (s *Server) handleMessage(rawMsg json.RawMessage) (interface{}, error) {
 		return s.handleSignatureHelp(msg)
 	case "textDocument/formatting":
 		return s.handleFormatting(msg)
+	case "textDocument/codeAction":
+		return s.handleCodeAction(msg)
 	default:
 		log.Printf("Unhandled method: %s", msg.Method)
 	}

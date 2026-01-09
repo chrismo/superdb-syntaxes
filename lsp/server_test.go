@@ -802,7 +802,7 @@ func TestDiagnosticsValidQueries(t *testing.T) {
 		"from test | head 10",
 		"from test | put y := x + 1",
 		"from test | summarize count() by x",
-		"from test | yield {a: 1}",
+		"from test | values {a: 1}",
 	}
 
 	for _, query := range validQueries {
@@ -829,6 +829,267 @@ func TestDiagnosticsInvalidQueries(t *testing.T) {
 			diagnostics := parseAndGetDiagnostics(query)
 			if len(diagnostics) == 0 {
 				t.Errorf("Expected diagnostics for invalid query: %s", query)
+			}
+		})
+	}
+}
+
+// Tests for migration diagnostics
+func TestMigrationDiagnostics(t *testing.T) {
+	tests := []struct {
+		name     string
+		query    string
+		wantCode string
+		wantMsg  string
+	}{
+		{
+			name:     "deprecated yield",
+			query:    "from test | yield {a: 1}",
+			wantCode: "deprecated-yield",
+			wantMsg:  "'yield' is deprecated, use 'values'",
+		},
+		{
+			name:     "deprecated func",
+			query:    "func add(a, b): a + b",
+			wantCode: "deprecated-func",
+			wantMsg:  "'func' is deprecated, use 'fn'",
+		},
+		{
+			name:     "deprecated arrow",
+			query:    "from test => output",
+			wantCode: "deprecated-arrow",
+			wantMsg:  "'=>' is deprecated, use 'into'",
+		},
+		{
+			name:     "deprecated parse_zson",
+			query:    `parse_zson("{a:1}")`,
+			wantCode: "deprecated-parse-zson",
+			wantMsg:  "'parse_zson' is deprecated, use 'parse_sup'",
+		},
+		{
+			name:     "deprecated cast time",
+			query:    `time('2025-01-01T00:00:00Z')`,
+			wantCode: "deprecated-cast-time",
+			wantMsg:  "Function-style cast deprecated, use '::time'",
+		},
+		{
+			name:     "implicit this grep",
+			query:    `grep(/error/)`,
+			wantCode: "implicit-this-grep",
+			wantMsg:  "grep() requires explicit 'this' argument",
+		},
+		{
+			name:     "implicit this is",
+			query:    `is(<string>)`,
+			wantCode: "implicit-this-is",
+			wantMsg:  "is() requires explicit 'this' argument",
+		},
+		{
+			name:     "implicit this nest_dotted",
+			query:    `nest_dotted()`,
+			wantCode: "implicit-this-nest-dotted",
+			wantMsg:  "nest_dotted() requires explicit 'this' argument",
+		},
+		{
+			name:     "removed crop",
+			query:    `crop(this)`,
+			wantCode: "removed-crop",
+			wantMsg:  "'crop()' was removed, use explicit casting",
+		},
+		{
+			name:     "deprecated comment slash",
+			query:    `from test // this is a comment`,
+			wantCode: "deprecated-comment-slash",
+			wantMsg:  "'//' comments are deprecated, use '--'",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			diags := getMigrationDiagnostics(tt.query)
+			if len(diags) == 0 {
+				t.Errorf("Expected migration diagnostic for: %s", tt.query)
+				return
+			}
+			found := false
+			for _, d := range diags {
+				if d.Diagnostic.Code == tt.wantCode {
+					found = true
+					if d.Diagnostic.Message != tt.wantMsg {
+						t.Errorf("Got message %q, want %q", d.Diagnostic.Message, tt.wantMsg)
+					}
+					break
+				}
+			}
+			if !found {
+				t.Errorf("Expected diagnostic code %q, got %v", tt.wantCode, diags[0].Diagnostic.Code)
+			}
+		})
+	}
+}
+
+func TestMigrationFixes(t *testing.T) {
+	tests := []struct {
+		name    string
+		query   string
+		wantFix string
+	}{
+		{
+			name:    "fix yield to values",
+			query:   "yield x",
+			wantFix: "values",
+		},
+		{
+			name:    "fix func to fn",
+			query:   "func add(a): a",
+			wantFix: "fn",
+		},
+		{
+			name:    "fix arrow to into",
+			query:   "from test => out",
+			wantFix: "into",
+		},
+		{
+			name:    "fix parse_zson to parse_sup",
+			query:   `parse_zson("{a:1}")`,
+			wantFix: "parse_sup(",
+		},
+		{
+			name:    "fix time cast",
+			query:   `time('2025-01-01')`,
+			wantFix: "'2025-01-01'::time",
+		},
+		{
+			name:    "fix grep with this",
+			query:   `grep(/error/)`,
+			wantFix: "grep('error', this)",
+		},
+		{
+			name:    "fix is with this",
+			query:   `is(<string>)`,
+			wantFix: "is(this, <string>)",
+		},
+		{
+			name:    "fix nest_dotted with this",
+			query:   `nest_dotted()`,
+			wantFix: "nest_dotted(this)",
+		},
+		{
+			name:    "fix comment slash to dash",
+			query:   `from test // comment`,
+			wantFix: " --", // preserves space before comment
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			diags := getMigrationDiagnostics(tt.query)
+			if len(diags) == 0 {
+				t.Errorf("Expected migration diagnostic for: %s", tt.query)
+				return
+			}
+			if diags[0].Fix == nil {
+				t.Errorf("Expected fix for: %s", tt.query)
+				return
+			}
+			if diags[0].Fix.NewText != tt.wantFix {
+				t.Errorf("Got fix %q, want %q", diags[0].Fix.NewText, tt.wantFix)
+			}
+		})
+	}
+}
+
+func TestMigrationMultiLine(t *testing.T) {
+	// Test multi-line document with multiple deprecated items
+	text := `from test
+| yield x
+| func add(a): a + 1
+| where x > 0 // filter positives`
+
+	diags := getMigrationDiagnostics(text)
+
+	// Should find: yield (line 1), func (line 2), // comment (line 3)
+	expectedCodes := map[string]bool{
+		"deprecated-yield":         false,
+		"deprecated-func":          false,
+		"deprecated-comment-slash": false,
+	}
+
+	for _, d := range diags {
+		if _, ok := expectedCodes[d.Diagnostic.Code]; ok {
+			expectedCodes[d.Diagnostic.Code] = true
+		}
+	}
+
+	for code, found := range expectedCodes {
+		if !found {
+			t.Errorf("Expected to find diagnostic %q in multi-line text", code)
+		}
+	}
+
+	// Verify line numbers are correct
+	for _, d := range diags {
+		switch d.Diagnostic.Code {
+		case "deprecated-yield":
+			if d.Diagnostic.Range.Start.Line != 1 {
+				t.Errorf("yield should be on line 1, got %d", d.Diagnostic.Range.Start.Line)
+			}
+		case "deprecated-func":
+			if d.Diagnostic.Range.Start.Line != 2 {
+				t.Errorf("func should be on line 2, got %d", d.Diagnostic.Range.Start.Line)
+			}
+		case "deprecated-comment-slash":
+			if d.Diagnostic.Range.Start.Line != 3 {
+				t.Errorf("// should be on line 3, got %d", d.Diagnostic.Range.Start.Line)
+			}
+		}
+	}
+}
+
+func TestMigrationMultipleOnSameLine(t *testing.T) {
+	// Multiple deprecated items on the same line
+	text := `yield x => output // done`
+
+	diags := getMigrationDiagnostics(text)
+
+	// Should find: yield, =>, //
+	if len(diags) < 3 {
+		t.Errorf("Expected at least 3 diagnostics, got %d", len(diags))
+		for _, d := range diags {
+			t.Logf("  Found: %s at col %d", d.Diagnostic.Code, d.Diagnostic.Range.Start.Character)
+		}
+	}
+
+	// All should be on line 0
+	for _, d := range diags {
+		if d.Diagnostic.Range.Start.Line != 0 {
+			t.Errorf("All diagnostics should be on line 0, got line %d for %s",
+				d.Diagnostic.Range.Start.Line, d.Diagnostic.Code)
+		}
+	}
+}
+
+func TestMigrationNoFalsePositives(t *testing.T) {
+	// These should NOT trigger migration diagnostics
+	queries := []string{
+		"from test | values {a: 1}",            // modern syntax
+		"fn add(a, b): a + b",                  // modern syntax
+		"from test into output",                // modern syntax
+		`parse_sup("{a:1}")`,                   // modern syntax
+		`'2025-01-01'::time`,                   // modern syntax
+		"grep('pattern', this)",                // explicit this
+		"is(this, <string>)",                   // explicit this
+		"nest_dotted(this)",                    // explicit this
+		"https://example.com",                  // URL should not match //
+		"from test -- this is a comment",       // modern comment syntax
+	}
+
+	for _, query := range queries {
+		t.Run(query, func(t *testing.T) {
+			diags := getMigrationDiagnostics(query)
+			if len(diags) > 0 {
+				t.Errorf("Unexpected migration diagnostic for: %s, got code=%s msg=%s",
+					query, diags[0].Diagnostic.Code, diags[0].Diagnostic.Message)
 			}
 		})
 	}
@@ -1249,6 +1510,175 @@ func TestFormattingHandler(t *testing.T) {
 
 	if len(edits) == 0 {
 		t.Error("Expected at least one edit for messy input")
+	}
+}
+
+func TestCodeActionHandler(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open document with deprecated syntax
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.spq",
+			LanguageID: "spq",
+			Version:    1,
+			Text:       "from test | yield {a: 1}",
+		},
+	}
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request code actions with the diagnostic context
+	codeActionParams := CodeActionParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.spq"},
+		Range: Range{
+			Start: Position{Line: 0, Character: 12},
+			End:   Position{Line: 0, Character: 17},
+		},
+		Context: CodeActionContext{
+			Diagnostics: []Diagnostic{
+				{
+					Range: Range{
+						Start: Position{Line: 0, Character: 12},
+						End:   Position{Line: 0, Character: 17},
+					},
+					Severity: DiagnosticSeverityWarning,
+					Code:     "deprecated-yield",
+					Source:   "superdb-lsp",
+					Message:  "'yield' is deprecated, use 'values'",
+				},
+			},
+		},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/codeAction", codeActionParams)
+	if err != nil {
+		t.Fatalf("CodeAction failed: %v", err)
+	}
+
+	if response == nil {
+		t.Fatal("Expected code action response, got nil")
+	}
+
+	// Parse code actions
+	resultBytes, err := json.Marshal(response.Result)
+	if err != nil {
+		t.Fatalf("Marshal result: %v", err)
+	}
+
+	var actions []CodeAction
+	if err := json.Unmarshal(resultBytes, &actions); err != nil {
+		t.Fatalf("Unmarshal actions: %v", err)
+	}
+
+	if len(actions) == 0 {
+		t.Fatal("Expected at least one code action")
+	}
+
+	// Verify the quick fix action
+	found := false
+	for _, action := range actions {
+		if action.Kind == CodeActionKindQuickFix && strings.Contains(action.Title, "values") {
+			found = true
+			if action.Edit == nil {
+				t.Error("Expected edit in code action")
+			} else if edits, ok := action.Edit.Changes["file:///test.spq"]; ok {
+				if len(edits) == 0 {
+					t.Error("Expected edits for file")
+				} else if edits[0].NewText != "values" {
+					t.Errorf("Expected NewText 'values', got %q", edits[0].NewText)
+				}
+			} else {
+				t.Error("Expected changes for file:///test.spq")
+			}
+			break
+		}
+	}
+	if !found {
+		t.Error("Expected quick fix action with 'values' replacement")
+	}
+}
+
+func TestCodeActionFixAll(t *testing.T) {
+	h := NewTestHelper()
+
+	// Initialize
+	_, err := h.ProcessRequest(1, "initialize", InitializeParams{ProcessID: 1})
+	if err != nil {
+		t.Fatalf("Initialize failed: %v", err)
+	}
+
+	// Open document with multiple deprecated items
+	openParams := DidOpenTextDocumentParams{
+		TextDocument: TextDocumentItem{
+			URI:        "file:///test.spq",
+			LanguageID: "spq",
+			Version:    1,
+			Text:       "from test | yield x => output",
+		},
+	}
+	_, err = h.ProcessNotification("textDocument/didOpen", openParams)
+	if err != nil {
+		t.Fatalf("didOpen failed: %v", err)
+	}
+
+	// Request code actions - should include "Fix all"
+	codeActionParams := CodeActionParams{
+		TextDocument: TextDocumentIdentifier{URI: "file:///test.spq"},
+		Range: Range{
+			Start: Position{Line: 0, Character: 0},
+			End:   Position{Line: 0, Character: 29},
+		},
+		Context: CodeActionContext{
+			Diagnostics: []Diagnostic{
+				{
+					Range:    Range{Start: Position{Line: 0, Character: 12}, End: Position{Line: 0, Character: 17}},
+					Code:     "deprecated-yield",
+					Message:  "'yield' is deprecated, use 'values'",
+				},
+				{
+					Range:    Range{Start: Position{Line: 0, Character: 20}, End: Position{Line: 0, Character: 22}},
+					Code:     "deprecated-arrow",
+					Message:  "'=>' is deprecated, use 'into'",
+				},
+			},
+		},
+	}
+
+	response, err := h.ProcessRequest(2, "textDocument/codeAction", codeActionParams)
+	if err != nil {
+		t.Fatalf("CodeAction failed: %v", err)
+	}
+
+	resultBytes, _ := json.Marshal(response.Result)
+	var actions []CodeAction
+	json.Unmarshal(resultBytes, &actions)
+
+	// Should have individual fixes plus "Fix all"
+	hasFixAll := false
+	for _, action := range actions {
+		if action.Kind == CodeActionKindSourceFixAll {
+			hasFixAll = true
+			if action.Edit == nil {
+				t.Error("Fix all should have edits")
+			} else if edits, ok := action.Edit.Changes["file:///test.spq"]; ok {
+				if len(edits) < 2 {
+					t.Errorf("Fix all should have at least 2 edits, got %d", len(edits))
+				}
+			}
+			break
+		}
+	}
+	if !hasFixAll {
+		t.Error("Expected 'Fix all' action when multiple issues present")
 	}
 }
 

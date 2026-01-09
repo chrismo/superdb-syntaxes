@@ -36,6 +36,12 @@ func (s *Server) handleInitialize(msg RPCMessage) (interface{}, error) {
 				RetriggerCharacters: []string{","},
 			},
 			DocumentFormattingProvider: true,
+			CodeActionProvider: &CodeActionOptions{
+				CodeActionKinds: []string{
+					CodeActionKindQuickFix,
+					CodeActionKindSourceFixAll,
+				},
+			},
 		},
 		ServerInfo: &ServerInfo{
 			Name:    "superdb-lsp",
@@ -223,4 +229,28 @@ func splitLines(text string) []string {
 		lines = append(lines, text[start:])
 	}
 	return lines
+}
+
+// handleCodeAction processes textDocument/codeAction requests
+func (s *Server) handleCodeAction(msg RPCMessage) (interface{}, error) {
+	var params CodeActionParams
+	if err := json.Unmarshal(msg.Params, &params); err != nil {
+		return nil, err
+	}
+
+	text, ok := s.documents[params.TextDocument.URI]
+	if !ok {
+		log.Printf("Document not found: %s", params.TextDocument.URI)
+		return response(msg.ID, []CodeAction{})
+	}
+
+	log.Printf("Code action request: %s at line=%d-%d",
+		params.TextDocument.URI,
+		params.Range.Start.Line,
+		params.Range.End.Line)
+
+	// Get code actions for the diagnostics in context
+	actions := getCodeActionsForDiagnostics(params.TextDocument.URI, text, params.Context.Diagnostics)
+
+	return response(msg.ID, actions)
 }
