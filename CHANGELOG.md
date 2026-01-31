@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.60130.0] - 2026-01-30
+## [0.1.0] - 2026-01-30
 
 ### Added
 - Function: `concat` (concatenate multiple strings)
 - TextMate: `values` operator to syntax highlighting
 
 ### Changed
+- Version now follows brimdata/super release versions
 - Updated parser API from `ParseQuery` to `Parse` (matches upstream refactor)
 - Synced with brimdata/super v0.1.0 release (commit e8764da)
 
