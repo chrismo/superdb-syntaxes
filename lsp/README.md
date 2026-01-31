@@ -27,7 +27,7 @@ The LSP server's keyword, function, operator, and type lists are synchronized wi
 
 These files can be updated independently, so version reflects the latest change to any of them.
 
-Last synchronized: December 31, 2025
+Last synchronized: January 30, 2026
 
 ## Installation
 
@@ -235,7 +235,7 @@ lsp/
 `assert`, `cut`, `debug`, `drop`, `explode`, `fork`, `fuse`, `head`, `join`, `load`, `merge`, `output`, `over`, `pass`, `put`, `rename`, `sample`, `search`, `skip`, `sort`, `summarize`, `switch`, `tail`, `top`, `uniq`, `unnest`, `values`, `where`, `yield`
 
 ### Functions
-`abs`, `base64`, `bucket`, `cast`, `ceil`, `cidr_match`, `coalesce`, `compare`, `date_part`, `error`, `fields`, `flatten`, `floor`, `grep`, `grok`, `has`, `has_error`, `hex`, `is`, `is_error`, `join`, `kind`, `ksuid`, `len`, `length`, `levenshtein`, `log`, `lower`, `max`, `min`, `missing`, `nameof`, `nest_dotted`, `network_of`, `now`, `nullif`, `parse_sup`, `parse_uri`, `position`, `pow`, `quiet`, `regexp`, `regexp_replace`, `replace`, `round`, `split`, `sqrt`, `strftime`, `trim`, `typename`, `typeof`, `under`, `unflatten`, `upper`
+`abs`, `base64`, `bucket`, `cast`, `ceil`, `cidr_match`, `coalesce`, `compare`, `concat`, `date_part`, `error`, `fields`, `flatten`, `floor`, `grep`, `grok`, `has`, `has_error`, `hex`, `is`, `is_error`, `join`, `kind`, `ksuid`, `len`, `length`, `levenshtein`, `log`, `lower`, `max`, `min`, `missing`, `nameof`, `nest_dotted`, `network_of`, `now`, `nullif`, `parse_sup`, `parse_uri`, `position`, `pow`, `quiet`, `regexp`, `regexp_replace`, `replace`, `round`, `split`, `sqrt`, `strftime`, `trim`, `typename`, `typeof`, `under`, `unflatten`, `upper`
 
 ### Aggregates
 `and`, `any`, `avg`, `collect`, `collect_map`, `count`, `dcount`, `first`, `fuse`, `last`, `max`, `min`, `or`, `sum`, `union`

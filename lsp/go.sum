@@ -24,6 +24,8 @@ github.com/bits-and-blooms/bitset v1.12.0 h1:U/q1fAF7xXRhFCrhROzIfffYnu+dlS38vCZ
 github.com/bits-and-blooms/bitset v1.12.0/go.mod h1:7hO7Gc7Pp1vODcmWvKMRA9BNmbv6a/7QIWpPxHddWR8=
 github.com/brimdata/super v0.0.0-20251231185817-5ea0cb5d6f24 h1:01D7jUV8xqFQxUSXOhyEy0A5pzHTdNuPD44QBDSZaEc=
 github.com/brimdata/super v0.0.0-20251231185817-5ea0cb5d6f24/go.mod h1:VapR2W8QoJHm5XCqFOqIY8U9Ic/MsdrwH6Gh6h2S7uQ=
+github.com/brimdata/super v0.1.1-0.20260130220942-e8764daa0832 h1:TjKs2x00HckPMrAIIl21OiBDZ9Sz6n0ImpFKvxI2UKo=
+github.com/brimdata/super v0.1.1-0.20260130220942-e8764daa0832/go.mod h1:VapR2W8QoJHm5XCqFOqIY8U9Ic/MsdrwH6Gh6h2S7uQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-metro v0.0.0-20180109044635-280f6062b5bc h1:8WFBn63wegobsYAX0YjD+8suexZDga5CctH4CCTx2+8=

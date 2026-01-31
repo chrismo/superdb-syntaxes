@@ -47,7 +47,7 @@ func parseAndGetDiagnostics(text string) []Diagnostic {
 	var diagnostics []Diagnostic
 
 	// Parse using the brimdata/super compiler parser
-	_, err := parser.ParseQuery(text)
+	_, err := parser.Parse("", []byte(text))
 	if err != nil {
 		diag := errorToDiagnostic(text, err)
 		diagnostics = append(diagnostics, diag)

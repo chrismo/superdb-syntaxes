@@ -281,7 +281,7 @@
     "operators-builtin": {
       "comment": "Built-in pipeline operators (lowercase only, uppercase matches SQL)",
       "name": "support.function.operator.spq",
-      "match": "\\b(aggregate|assert|call|cut|debug|drop|explode|fork|from|fuse|head|join|load|merge|output|over|pass|put|rename|sample|search|shapes|skip|sort|summarize|switch|tail|top|uniq|unnest|where|yield)\\b"
+      "match": "\\b(aggregate|assert|call|cut|debug|drop|explode|fork|from|fuse|head|join|load|merge|output|over|pass|put|rename|sample|search|shapes|skip|sort|summarize|switch|tail|top|uniq|unnest|values|where|yield)\\b"
     },
     "functions-aggregate": {
       "comment": "Aggregate functions (lowercase only, uppercase matches SQL)",

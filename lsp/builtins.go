@@ -259,6 +259,12 @@ var allBuiltins = []Builtin{
 		Parameters: []ParamDef{{Name: "value", Doc: "Values to check"}},
 	},
 	{
+		Name: "concat", Kind: KindFunction,
+		Brief: "Concatenate strings", Doc: "Concatenate multiple strings into one",
+		Signature: "concat(values: string, ...) -> string",
+		Parameters: []ParamDef{{Name: "values", Doc: "Strings to concatenate"}},
+	},
+	{
 		Name: "compare", Kind: KindFunction,
 		Brief: "Compare two values", Doc: "Compare two values, returning -1, 0, or 1",
 		Signature: "compare(a: any, b: any) -> int64",

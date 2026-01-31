@@ -13,7 +13,7 @@ Example:
 ```
 Fix parser import for new API
 
-Update from ParseZed to ParseQuery to match the
+Update from ParseQuery to Parse to match the
 renamed function in brimdata/super.
 ```
 

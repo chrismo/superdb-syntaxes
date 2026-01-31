@@ -4,7 +4,7 @@ go 1.24.7
 
 require (
 	github.com/BurntSushi/toml v1.6.0
-	github.com/brimdata/super v0.0.0-20251231185817-5ea0cb5d6f24
+	github.com/brimdata/super v0.1.1-0.20260130220942-e8764daa0832
 )
 
 require (
